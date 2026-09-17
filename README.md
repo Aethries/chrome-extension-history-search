@@ -27,23 +27,17 @@ you can simply open Chrome Navigator and search.
 
 ## Core Features
 
-- 🔎 Search open tabs, bookmarks, and browser history from one place
-- ⌨️ Fully keyboard-first navigation
-- ♻️ Reuse existing tabs instead of creating duplicates
-- ⚡ Fast fuzzy and relevance-based search
-- 📌 Pin frequently used pages
+- Search open tabs, bookmarks, and browser history from one place
+- Fully keyboard-first navigation
+- Reuse existing tabs instead of creating duplicates
+- Fast fuzzy and relevance-based search
+- Pin frequently used pages
 - `/` Scope commands such as `/tab`, `/bm`, and `/history`
-- 🏷️ Custom aliases such as `/jira`, `/gh`, `GH`, or `JR`
-- 🌐 Domain-aware searching and navigation
-- 🔗 Control whether navigation preserves full URLs, query parameters, or only domains
-- 🪟 Search and switch across multiple Chrome windows
-- 🧠 Local usage-based ranking for frequently selected results
-- 🔒 Privacy-first: browsing data stays on your device
-- 🎨 Lightweight floating command palette that works directly on web pages
-- 🧩 Extensible architecture for future commands, search engines, integrations, and browser actions
-
-## Example
-
-```text
-Shift + O
-```
+- Custom aliases such as `/jira`, `/gh`, `GH`, or `JR`
+- Domain-aware searching and navigation
+- Control whether navigation preserves full URLs, query parameters, or only domains
+- Search and switch across multiple Chrome windows
+- Local usage-based ranking for frequently selected results
+- Privacy-first: browsing data stays on your device
+- Lightweight floating command palette that works directly on web pages
+- Extensible architecture for future commands, search engines, integrations, and browser actions
