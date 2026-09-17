@@ -100,18 +100,33 @@ The parser is permissive and flexible: token ordering is non-rigid.
 
 ---
 
-## 3. Built-in Scope Commands
+## 3. Data-Driven Scope Registry & Configurable Built-in Scopes
 
-Built-in scopes immediately restrict candidate search sources:
+Built-in scopes restrict candidate search sources. Rather than being hardcoded into parser logic, scopes are managed via a **Data-Driven Scope Registry** initialized with sensible defaults that users can freely customize or rebind in settings:
 
-| Scope Trigger | Canonical Name | Target Data Source |
-| :--- | :--- | :--- |
-| `/tab`, `/t` | Tabs | Only currently open browser tabs (across all windows) |
-| `/bm`, `/bookmark` | Bookmarks | Chrome bookmark tree |
-| `/history`, `/ht` | History | Local browsing history entries |
-| `/pin`, `/pinned` | Pinned Items | Chrome Navigator user-pinned items |
-| `/recent` | Recent | Recently accessed items in Navigator |
-| `/cmd`, `>` | Commands | Browser management actions & tools |
+```typescript
+export interface ScopeDefinition {
+  id: 'tab' | 'bookmark' | 'history' | 'pin' | 'recent' | 'command' | 'audio';
+  name: string;
+  description: string;
+  defaultTriggers: string[];
+  userTriggers: string[];    // User-customizable triggers (e.g. ["/o", "/tab"])
+  isSystem: boolean;        // System providers cannot be deleted, but triggers can be changed
+  enabled: boolean;
+}
+```
+
+### Default Scope Registry Table
+
+| Scope Identifier | Default Triggers | Customizable | Target Data Source |
+| :--- | :--- | :---: | :--- |
+| `tab` | `/tab`, `/t` | Yes | Only currently open browser tabs (across all windows) |
+| `bookmark` | `/bm`, `/b`, `/bookmark` | Yes | Chrome bookmark tree |
+| `history` | `/history`, `/ht` | Yes | Local browsing history entries |
+| `pin` | `/pin`, `/pinned` | Yes | Chrome Navigator user-pinned items |
+| `recent` | `/recent` | Yes | Recently accessed items in Navigator |
+| `command` | `/cmd`, `>` | Yes | Browser management actions & tools |
+| `audio` | `/audio` | Yes | Currently audible or muted tabs |
 
 ### 3.1 Unknown Slash Command Fallback
 

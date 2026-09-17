@@ -137,3 +137,27 @@ export interface DomainRuleDefinition {
 ## 5. Feature Flags & Experimental Labs
 
 The `experiments` configuration tree allows modular shipping of cutting-edge experimental features (e.g. remote Jira provider, AI summaries) without destabilizing core production navigation.
+
+---
+
+## 6. Dedicated Extension Options Page (options.html)
+
+In addition to inline command palette settings, Chrome Navigator provides a full-featured graphical settings dashboard rendered via `options.html` and registered in Manifest V3 under `options_ui`:
+
+```json
+{
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  }
+}
+```
+
+### 6.1 Options Page Functional Tabs
+
+1. **General**: Global in-page shortcut remapping, blur dismiss behaviors, search memory retention, two-step Escape dismiss.
+2. **Scopes and Aliases**: Visual editor to customize default scope triggers (`/tab`, `/bm`, `/history`) and manage custom aliases (`/jira`, `GH`).
+3. **Domain and URL Rules**: Per-domain navigation preferences (`@query` vs `@domain`), tracking parameter strip lists, and Shift+O exclusion lists.
+4. **Appearance**: Theme switcher (System, Dark, Light, High-Contrast), density mode, and palette geometry width.
+5. **Data and Privacy**: One-click purge for local query-association ranking, sensitive domain exclusion manager, and JSON configuration backup export/import.
+

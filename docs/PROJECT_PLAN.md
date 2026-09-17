@@ -270,6 +270,21 @@ When setting up your GitHub Project (v2), configure these custom fields:
 
 ---
 
+#### Issue 2.6: Smart Ephemeral Redirect and OAuth Noise Filtering
+- Title: `feat(history): smart ephemeral redirect and oauth noise filtering`
+- Labels: `area:search`, `type:feat`, `priority:p1`
+- Effort: S
+- Description:
+  Filter out ephemeral OAuth callbacks, auth redirects, and noisy intermediate pages from history search results.
+- Requirements:
+  - Maintain default pattern blacklist for ephemeral auth/redirect URLs (e.g. `accounts.google.com/o/oauth2`, `login.microsoftonline.com`, `/callback`, `/oauth/authorize`, `/saml`).
+  - De-prioritize or filter out raw search engine query result pages (e.g. `google.com/search?q=...`) unless explicitly scoped.
+  - Allow user to toggle or customize noise filters in settings.
+- Acceptance Criteria:
+  - Searching history does not get polluted with expired login redirects or one-time OAuth verification URLs.
+
+---
+
 ### Milestone 3: Query Parser, Scopes and Custom Aliases
 
 - Goal: Implement EBNF query grammar, built-in slash scopes, and user-defined domain aliases.
@@ -333,6 +348,23 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Acceptance Criteria:
   - Selecting item with `@domain` modifier navigates to `https://jira.com/` instead of deep issue path.
   - Selecting item with `@query` preserves all query parameters.
+
+---
+
+#### Issue 3.5: Data-Driven Scope Registry with Configurable Default Triggers
+- Title: `refactor(parser): data-driven scope registry with configurable default triggers`
+- Labels: `area:parser`, `type:refactor`, `priority:p0`
+- Effort: M
+- Description:
+  Eliminate hardcoded `/tab`, `/bm`, and `/history` string checks in query parser. Implement a data-driven ScopeRegistry that initializes with system defaults but allows full user customization.
+- Requirements:
+  - Define `ScopeDefinition` entity with `defaultTriggers` and `userTriggers`.
+  - Seed default scopes: tabs (`/tab`, `/t`), bookmarks (`/bm`, `/b`), history (`/history`, `/ht`), pins (`/pin`), recent (`/recent`), commands (`>`).
+  - Parser queries ScopeRegistry dynamically rather than checking hardcoded constants.
+  - Allow users to modify triggers, add prefixes, or disable individual scopes.
+- Acceptance Criteria:
+  - User can change `/tab` to `/o` or `/t` to `/tab` in settings and parser respects new triggers immediately.
+  - System scope providers remain immutable while their trigger keywords are completely customizable.
 
 ---
 
@@ -470,6 +502,21 @@ When setting up your GitHub Project (v2), configure these custom fields:
 
 ---
 
+#### Issue 5.6: Query Draft Recovery on Accidental Dismissal
+- Title: `feat(ux): query draft recovery on accidental dismissal`
+- Labels: `area:overlay`, `type:feat`, `priority:p1`
+- Effort: S
+- Description:
+  Prevent loss of context when a user accidentally clicks outside or presses Escape while composing a long search query.
+- Requirements:
+  - Store the last non-empty query string and active selection in ephemeral session storage upon dismissal.
+  - If user summons Navigator again within 10 seconds, restore the draft query and selection index.
+  - Add subtle visual indicator: `Restored previous draft (Press Esc to clear)`.
+- Acceptance Criteria:
+  - Accidental clicks outside the palette do not cause user to retype complex multi-token queries.
+
+---
+
 ### Milestone 6: Pins, Zero-State Dashboard and Tab Hygiene
 
 - Goal: Implement persistent polymorphic pins, the empty-state dashboard, and duplicate tab cleanup.
@@ -532,6 +579,22 @@ When setting up your GitHub Project (v2), configure these custom fields:
 
 ---
 
+#### Issue 6.5: Audible Tabs Hunting and Quick Mute Toggle
+- Title: `feat(audio): audible tabs hunting and quick mute toggle`
+- Labels: `area:tabs`, `type:feat`, `priority:p1`
+- Effort: S
+- Description:
+  Solve the common user pain point of finding and silencing noisy background tabs.
+- Requirements:
+  - Add `/audio` built-in scope to surface only tabs currently producing sound or muted.
+  - Sort currently audible tabs to top of result candidates when audio is detected.
+  - Provide quick shortcut (`M` or `Space` in list) to toggle mute state immediately.
+  - Add command `Mute All Other Tabs`.
+- Acceptance Criteria:
+  - User can type `/audio` to see all noisy tabs and mute them with a single keystroke.
+
+---
+
 ### Milestone 7: Configuration, Persistence and Backup
 
 - Goal: Build settings system, schema migrations, and JSON import/export.
@@ -591,6 +654,24 @@ When setting up your GitHub Project (v2), configure these custom fields:
 
 ---
 
+#### Issue 7.5: Dedicated Extension Settings Page (options.html)
+- Title: `feat(options): dedicated extension settings page (options.html)`
+- Labels: `area:storage`, `type:feat`, `priority:p0`
+- Effort: L
+- Description:
+  Build a full-featured, dedicated Web Extension Options Page (`options.html`) providing an intuitive graphical settings dashboard.
+- Requirements:
+  - Tab 1: General (In-page shortcut remapping, blur dismiss toggles, query memory).
+  - Tab 2: Scopes and Aliases (Visual editor for modifying default scope triggers and creating custom domain aliases).
+  - Tab 3: Domain and URL Rules (Query parameter whitelists, tracking stripping, domain exclusions for Shift+O).
+  - Tab 4: Appearance (Theme switcher for Dark/Light/System/High-Contrast, density mode, palette width).
+  - Tab 5: Privacy and Data (Learned ranking purge button, sensitive domain exclusion list, JSON backup export/import).
+- Acceptance Criteria:
+  - Opens via right-click extension icon -> Options, or via `/settings` command.
+  - Changes save reactively to `chrome.storage.sync` and apply immediately to content scripts without page reload.
+
+---
+
 ### Milestone 8: Robustness, Web Compatibility and Accessibility
 
 - Goal: Guarantee flawless execution on complex web apps, full keyboard accessibility, and international input support.
@@ -647,6 +728,21 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Acceptance Criteria:
   - Striking Enter to commit an IME candidate does not navigate or close Navigator.
   - Searching `cafe` matches `café`; searching `hanoi` matches `Hà Nội`.
+
+---
+
+#### Issue 8.5: Interactive Keyboard Shortcut Playground and Cheat-Sheet
+- Title: `feat(onboarding): interactive keyboard shortcut playground and cheat-sheet`
+- Labels: `area:overlay`, `type:feat`, `priority:p2`
+- Effort: S
+- Description:
+  Provide an interactive onboarding guide on first install to teach core keyboard shortcuts without leaving the browser page.
+- Requirements:
+  - Detect extension install event (`chrome.runtime.onInstalled` with reason `'install'`).
+  - Open a lightweight interactive modal playground demonstrating `Shift+O`, arrow navigation, `Alt+Enter`, and `Ctrl+K`.
+  - Provide a persistent help footer in palette showing context-aware shortcut hints based on current selection.
+- Acceptance Criteria:
+  - New users learn the 4 essential shortcuts within 30 seconds of installing the extension.
 
 ---
 
@@ -750,3 +846,30 @@ When setting up your GitHub Project (v2), configure these custom fields:
   - Bypassed entirely when offline (`navigator.onLine === false`).
 - Acceptance Criteria:
   - Future plugins can register search providers without altering core navigator code.
+
+#### Issue 10.4: Unit and Integration Testing Suite for Parser and Ranker
+- Title: `test(core): unit and integration testing suite for parser and ranker`
+- Labels: `area:search`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Establish automated unit and integration tests using Vitest to prevent regressions in core algorithms.
+- Requirements:
+  - Test suite for Query Lexer and EBNF Parser (validating scopes, aliases, quotes, negation, escapes).
+  - Test suite for URL Normalization and tracking parameter stripper.
+  - Test suite for multi-tier matching (exact, prefix, token, fuzzy Smith-Waterman).
+  - Test suite for composite ranking formula and recency decay math.
+- Acceptance Criteria:
+  - Test runner runs in under 3 seconds with 90%+ branch coverage across core parsing and ranking modules.
+
+#### Issue 10.5: Chrome Web Store Packaging and Build Automation
+- Title: `chore(release): chrome web store packaging and build automation`
+- Labels: `area:overlay`, `type:feat`, `priority:p2`
+- Effort: S
+- Description:
+  Automate production asset generation, extension packaging, and Chrome Web Store zip validation.
+- Requirements:
+  - Generate crisp production icons in 16x16, 32x32, 48x48, and 128x128 formats.
+  - Add `npm run zip` command to create clean, production-minified extension bundle.
+  - Validate `manifest.json` against Chrome Web Store policies (CSP compliance, minimum permissions).
+- Acceptance Criteria:
+  - Running `npm run build && npm run zip` creates a ready-to-upload zip file without development artifacts.
