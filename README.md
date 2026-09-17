@@ -137,8 +137,9 @@ $$\text{Score} = (S_{\text{match}} \times W_{\text{source}}) + B_{\text{window}}
 
 ## Technical Specifications Suite
 
-The project follows a comprehensive, modular specification standard. Full technical specifications are available in [`docs/specs/`](docs/specs/README.md):
+The project follows a comprehensive, modular specification standard. Full technical specifications and implementation plans are available:
 
+- [Project Plan, Milestones and GitHub Issues](docs/PROJECT_PLAN.md): Complete engineering plan with 11 milestones, 45 issue specifications, and label taxonomy.
 - [Master Index and Traceability Matrix](docs/specs/README.md): Requirement mapping for all 300 specifications.
 - [00. Overview and System Architecture](docs/specs/00-overview-and-architecture.md): Vision, MV3 component model, and lifecycles.
 - [01. Invocation, Overlay and Web Compatibility](docs/specs/01-invocation-and-overlay.md): Shortcuts, closed Shadow Root isolation, z-index, and accessibility.

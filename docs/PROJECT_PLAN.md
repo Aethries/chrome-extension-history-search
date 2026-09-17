@@ -1,0 +1,752 @@
+# Chrome Navigator: Project Plan, Milestones and GitHub Setup
+
+This document defines the complete engineering roadmap, GitHub Milestone structure, GitHub Issue catalog, and label taxonomy for Chrome Navigator.
+
+The execution model is capability-driven rather than deadline-driven. Work progresses sequentially through functional milestones based on technical dependencies.
+
+---
+
+## 1. GitHub Labels Taxonomy
+
+Use this standardized label configuration in your GitHub repository.
+
+### Area Labels (Functional Subsystems)
+
+| Label Name | Description | Color Code |
+| :--- | :--- | :--- |
+| `area:overlay` | In-page injection, closed Shadow Root, CSS isolation, z-index | `#0E8A16` |
+| `area:tabs` | Chrome tabs querying, tab reuse, window focusing, tab groups | `#1D76DB` |
+| `area:search` | Multi-tier matching engine, tri-gram index, token search | `#5319E7` |
+| `area:ranking` | Scoring formula, decay algorithms, local learning feedback | `#B60205` |
+| `area:parser` | Query lexer, EBNF parser, AST generation, scopes, aliases | `#D93F0B` |
+| `area:keyboard` | Keybinding handlers, focus model, actions menu, multi-select | `#0052CC` |
+| `area:storage` | Storage tiering, IndexedDB, Chrome sync, schema migrations | `#006B75` |
+| `area:a11y` | Accessibility, ARIA combobox pattern, screen readers, focus traps | `#C5DEF5` |
+| `area:compat` | Web app conflict resolution, iframe and fullscreen handling | `#FBCA04` |
+| `area:tools` | Omnibox integration, inline calculator, URL launcher | `#E99695` |
+| `area:perf` | Performance optimization, memory profiling, cancellation tokens | `#7057FF` |
+
+### Type Labels (Issue Nature)
+
+| Label Name | Description | Color Code |
+| :--- | :--- | :--- |
+| `type:feat` | New user-facing capability or system feature | `#1D76DB` |
+| `type:fix` | Bug fix or behavioral correction | `#D73A4A` |
+| `type:perf` | Performance improvement or latency reduction | `#A2EEEF` |
+| `type:refactor` | Code restructuring without feature alteration | `#CFD3D7` |
+| `type:spec` | Architectural specification update or documentation | `#0075CA` |
+
+### Priority Labels (Relative Urgency)
+
+| Label Name | Description | Color Code |
+| :--- | :--- | :--- |
+| `priority:p0` | Fundamental architecture or core MVP blocker | `#B60205` |
+| `priority:p1` | High value capability required for daily power use | `#D93F0B` |
+| `priority:p2` | Useful enhancement or secondary workflow | `#FBCA04` |
+| `priority:p3` | Polish, experimental feature, or future integration | `#C5DEF5` |
+
+---
+
+## 2. GitHub Project Fields Configuration
+
+When setting up your GitHub Project (v2), configure these custom fields:
+
+- Status: Backlog, Ready, In Progress, Testing, Done
+- Milestone: Select from GitHub Milestones (Milestone 0 to 10)
+- Priority: Single Select (P0, P1, P2, P3)
+- Effort: Single Select (XS, S, M, L, XL) or Story Points (1, 2, 3, 5, 8)
+- Area: Single Select matching Area labels
+
+---
+
+## 3. Milestone Catalog & Issue Specifications
+
+### Milestone 0: Foundation and Host Injection
+
+- Goal: Construct Manifest V3 extension skeleton, background service worker lifecycle, and closed Shadow DOM overlay.
+- Target Specs: SPEC-00, SPEC-01
+
+#### Issue 0.1: Manifest V3 Skeleton and Build Pipeline
+- Title: `feat(core): manifest v3 skeleton and build pipeline`
+- Labels: `area:overlay`, `type:feat`, `priority:p0`
+- Effort: S
+- Description:
+  Set up the base Chrome extension structure using TypeScript and a modern bundler.
+- Requirements:
+  - Manifest file targeting Manifest V3 with minimal required permissions (`tabs`, `storage`, `commands`).
+  - Background Service Worker registration with entrypoint `background.ts`.
+  - Content script configured to inject into `<all_urls>` at `document_start`.
+  - Development build script with live recompile.
+- Acceptance Criteria:
+  - Extension loads into Chrome without manifest errors or warnings.
+  - Background service worker starts and logs initialization.
+  - Content script executes on any visited web page.
+
+#### Issue 0.2: Closed Shadow Root Injection and CSS Isolation
+- Title: `feat(overlay): closed shadow root injection and css isolation`
+- Labels: `area:overlay`, `type:feat`, `priority:p0`
+- Effort: M
+- Description:
+  Inject the command palette container into web pages inside a closed Shadow DOM to guarantee total isolation from host page styles.
+- Requirements:
+  - Create custom host element `chrome-navigator-host`.
+  - Attach closed shadow root using `Element.attachShadow({ mode: "closed" })`.
+  - Apply CSS resets using CSS layers to prevent host stylesheet inheritance.
+  - Set z-index to maximum integer (2147483647) with `position: fixed`.
+- Acceptance Criteria:
+  - Host website styles (CSS resets, fonts, colors) do not affect Navigator UI.
+  - Navigator CSS rules do not bleed out into host website elements.
+
+#### Issue 0.3: In-Page Keystroke Filtering and Suppression
+- Title: `feat(input): in-page keystroke filtering and suppression`
+- Labels: `area:overlay`, `type:feat`, `priority:p0`
+- Effort: S
+- Description:
+  Capture `Shift+O` key combination on the window capturing phase while suppressing activation when the user is typing in form controls or code editors.
+- Requirements:
+  - Add capturing keydown listener on `window`.
+  - Implement element inspection for input, textarea, select, contenteditable, and ARIA text roles.
+  - Check for common code editor containers (Monaco, CodeMirror, ProseMirror, Slate).
+- Acceptance Criteria:
+  - Pressing `Shift+O` in regular page context summons the palette.
+  - Pressing `Shift+O` inside an input field, Google Docs, or VS Code Web inserts capital letter O and does not open Navigator.
+
+#### Issue 0.4: Browser Shortcut and Palette Toggle State Machine
+- Title: `feat(input): browser shortcut and palette toggle state machine`
+- Labels: `area:overlay`, `type:feat`, `priority:p0`
+- Effort: S
+- Description:
+  Integrate Chrome Commands API for browser-level toggling and manage overlay state transitions.
+- Requirements:
+  - Register `CommandOrControl+Shift+O` in `manifest.json`.
+  - Implement toggle finite-state machine: Closed -> Opening -> Open -> Closing -> Closed.
+  - Close palette when Escape is pressed or when clicking outside on the backdrop.
+- Acceptance Criteria:
+  - Hitting browser shortcut toggles overlay visibility from anywhere.
+  - Overlay dismisses cleanly and restores focus to previous active element.
+
+---
+
+### Milestone 1: Minimum Viable Palette and Tab Switcher
+
+- Goal: Complete the core loop `Open -> Type -> Navigate` for open browser tabs across all windows.
+- Target Specs: SPEC-06, SPEC-07
+
+#### Issue 1.1: Search Input Autofocus and Virtual Result List
+- Title: `feat(ui): search input autofocus and virtual result list`
+- Labels: `area:overlay`, `area:keyboard`, `type:feat`, `priority:p0`
+- Effort: M
+- Description:
+  Implement palette UI containing the search input box and a high-performance result list.
+- Requirements:
+  - Search input automatically gains focus on mount without requiring mouse clicks.
+  - Render list of results using fixed row heights for high rendering speed.
+  - Position overlay horizontally centered and 18 percent from top of viewport.
+- Acceptance Criteria:
+  - Input is ready to accept text within 16ms of overlay opening.
+  - Palette layout is visually centered and responsive.
+
+#### Issue 1.2: Multi-Window Tab Provider and Reactive Cache
+- Title: `feat(tabs): multi-window tab provider and reactive cache`
+- Labels: `area:tabs`, `type:feat`, `priority:p0`
+- Effort: M
+- Description:
+  Retrieve and maintain an in-memory index of open tabs across all Chrome windows.
+- Requirements:
+  - Fetch open tabs via `chrome.tabs.query({})`.
+  - Listen to `chrome.tabs.onCreated`, `onRemoved`, and `onUpdated` to update memory cache reactively.
+  - Extract title, URL, window ID, tab index, and audio status.
+- Acceptance Criteria:
+  - Tabs in background windows are indexed and searchable.
+  - Creating or closing a tab immediately updates the in-memory tab index.
+
+#### Issue 1.3: Tab Reuse and Window Focusing Navigation
+- Title: `feat(nav): tab reuse and window focusing navigation`
+- Labels: `area:tabs`, `type:feat`, `priority:p0`
+- Effort: S
+- Description:
+  Switch to existing open tab when selected, bringing its parent window to focus.
+- Requirements:
+  - On Enter, determine target tab ID and window ID.
+  - Focus target window using `chrome.windows.update(windowId, { focused: true })`.
+  - Activate target tab using `chrome.tabs.update(tabId, { active: true })`.
+  - Close the Navigator overlay on the origin page.
+- Acceptance Criteria:
+  - Selecting an existing open tab switches to it in under 25ms without creating a duplicate.
+  - Works across multiple monitors and separate browser windows.
+
+#### Issue 1.4: Keyboard Navigation and Boundary Wrapping
+- Title: `feat(keyboard): keyboard navigation and boundary wrapping`
+- Labels: `area:keyboard`, `type:feat`, `priority:p0`
+- Effort: S
+- Description:
+  Provide responsive keyboard navigation through result rows.
+- Requirements:
+  - Arrow Down and `Ctrl+N` move selection down.
+  - Arrow Up and `Ctrl+P` move selection up.
+  - Home and End jump to first and last items.
+  - Wrap selection cyclically from bottom to top and top to bottom.
+- Acceptance Criteria:
+  - Visual selection indicator tracks active index synchronously on keydown.
+  - Virtual list auto-scrolls to keep active item in view.
+
+---
+
+### Milestone 2: Universal Retrieval and Deduplication
+
+- Goal: Expand search to Bookmarks and Browsing History, with URL canonicalization and cross-source deduplication.
+- Target Specs: SPEC-03, SPEC-05
+
+#### Issue 2.1: Bookmarks and History Data Providers
+- Title: `feat(search): bookmarks and history data providers`
+- Labels: `area:search`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Connect Chrome Bookmarks and History APIs to the federated search engine.
+- Requirements:
+  - Read bookmark tree via `chrome.bookmarks.search`.
+  - Query history via `chrome.history.search` with a 120ms debounce.
+  - Support non-blocking asynchronous result delivery.
+- Acceptance Criteria:
+  - Bookmarks and history records appear in candidate search stream.
+  - Fast sources (tabs, bookmarks) render before history without UI freeze.
+
+#### Issue 2.2: Canonical URL Normalization and Tracking Sanitizer
+- Title: `feat(url): canonical url normalization and tracking sanitizer`
+- Labels: `area:search`, `type:feat`, `priority:p1`
+- Effort: S
+- Description:
+  Transform raw URLs into standardized canonical representations to enable deduplication and clean matching.
+- Requirements:
+  - Lowercase protocol and hostname.
+  - Remove standard ports (80, 443) and normalize trailing slashes.
+  - Strip tracking query parameters (`utm_source`, `utm_medium`, `fbclid`, `gclid`).
+- Acceptance Criteria:
+  - URLs with identical destinations but differing tracking parameters evaluate to the same canonical key.
+
+#### Issue 2.3: Cross-Source Entity Deduplication Pipeline
+- Title: `feat(search): cross-source entity deduplication pipeline`
+- Labels: `area:search`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Merge multi-source occurrences of the same canonical URL into a single unified result item.
+- Requirements:
+  - If a URL is open in a tab, saved as a bookmark, and present in history, produce one result row.
+  - Assign combined badges (`TAB`, `BM`, `HISTORY`).
+  - Set primary navigation target according to priority: Tab > Bookmark > History.
+- Acceptance Criteria:
+  - No duplicate rows appear for the same web page.
+  - Activating a deduplicated item activates the open tab rather than navigating.
+
+#### Issue 2.4: Multi-Tier Matching Engine
+- Title: `feat(search): multi-tier matching engine`
+- Labels: `area:search`, `type:feat`, `priority:p1`
+- Effort: L
+- Description:
+  Implement five-tier matching pipeline for search queries.
+- Requirements:
+  - Tier 1: Exact match on title, host, or URL.
+  - Tier 2: Prefix match on tokens and word boundaries.
+  - Tier 3: Word boundary substring match.
+  - Tier 4: Unordered tokenized match.
+  - Tier 5: Fuzzy match with configurable strength (Smith-Waterman distance).
+- Acceptance Criteria:
+  - Querying `jira login bug` matches `Login issue [Bug] - Jira Cloud`.
+  - Typos like `gthb` successfully match `GitHub` under balanced fuzzy setting.
+
+#### Issue 2.5: Result Row Typography, Match Highlight and Favicons
+- Title: `feat(ui): result row typography, match highlight and favicons`
+- Labels: `area:overlay`, `type:feat`, `priority:p1`
+- Effort: S
+- Description:
+  Render clean result items with visual badges, bold character highlights, and favicons.
+- Requirements:
+  - Highlight matched character indices in title and URL.
+  - Render source badges (`TAB`, `BM`, `HIST`).
+  - Load favicons via Chrome internal favicon URL with SVG domain-letter fallback.
+- Acceptance Criteria:
+  - Matched characters are clearly visible.
+  - Missing favicons gracefully fall back to monogram SVGs without layout shifts.
+
+---
+
+### Milestone 3: Query Parser, Scopes and Custom Aliases
+
+- Goal: Implement EBNF query grammar, built-in slash scopes, and user-defined domain aliases.
+- Target Specs: SPEC-02
+
+#### Issue 3.1: Query Lexer and AST Generator
+- Title: `feat(parser): query lexer and ast generator`
+- Labels: `area:parser`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Build a lexer and parser that generates a typed Abstract Syntax Tree from search input.
+- Requirements:
+  - Tokenize modifiers, scopes, aliases, filter operators, quoted strings, and negated terms.
+  - Support order independence (e.g. `@query /history jira` equals `/history @query jira`).
+  - Support exact phrase search with double quotes (`"pull request"`).
+  - Support negation tokens (`-draft`).
+- Acceptance Criteria:
+  - Valid AST produced for complex composite queries.
+  - Quoted tokens are preserved intact; negated terms filter out matching candidates.
+
+#### Issue 3.2: Built-in Scope Commands and Fallback
+- Title: `feat(scope): built-in scope commands and fallback`
+- Labels: `area:parser`, `type:feat`, `priority:p1`
+- Effort: S
+- Description:
+  Provide slash commands to restrict candidate search sources directly.
+- Requirements:
+  - Support `/tab`, `/t` for open tabs only.
+  - Support `/bm`, `/bookmark` for bookmarks only.
+  - Support `/history`, `/ht` for history only.
+  - Fall back gracefully: unknown slash commands (e.g. `/foo bar`) are treated as literal search text.
+- Acceptance Criteria:
+  - Entering `/tab react` strictly limits candidates to active tabs.
+  - Typing an unconfigured slash command does not throw errors or blank the UI.
+
+#### Issue 3.3: Custom Domain Aliases and Head-Anchored Prefixes
+- Title: `feat(alias): custom domain aliases and head-anchored prefixes`
+- Labels: `area:parser`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Enable users to define custom triggers mapping to specific domains or wildcard paths.
+- Requirements:
+  - Support custom alias model (name, triggers, domains, URL patterns).
+  - Support plain text prefixes (e.g. `GH`, `gh`, `JIRA`) case-insensitively.
+  - Enforce head-anchoring: prefix only triggers if it is the first token in the query.
+  - Resolve conflicts: system scopes beat custom aliases, longest match wins.
+- Acceptance Criteria:
+  - Typing `GH react` scopes search to `github.com`.
+  - Typing `react GH hook` does not trigger the GitHub alias.
+
+#### Issue 3.4: URL Navigation Modifiers (@query and @domain)
+- Title: `feat(modifier): url navigation modifiers`
+- Labels: `area:parser`, `area:tabs`, `type:feat`, `priority:p1`
+- Effort: S
+- Description:
+  Allow users to control destination URL depth using `@query` and `@domain` modifiers.
+- Requirements:
+  - `@query`: Preserves full URL path and query parameters upon navigation.
+  - `@domain`: Strips pathname and query parameters, collapsing navigation to root domain.
+  - Modifier explicitly overrides alias or global navigation defaults.
+- Acceptance Criteria:
+  - Selecting item with `@domain` modifier navigates to `https://jira.com/` instead of deep issue path.
+  - Selecting item with `@query` preserves all query parameters.
+
+---
+
+### Milestone 4: Ranking Math and Local Usage Learning
+
+- Goal: Implement multi-factor scoring formula, exponential recency decay, and on-device learning.
+- Target Specs: SPEC-04
+
+#### Issue 4.1: Multi-Factor Composite Scoring Formula
+- Title: `feat(ranking): multi-factor composite scoring formula`
+- Labels: `area:ranking`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Combine match quality, source weights, window locality, and active tab status into a composite ranking score.
+- Requirements:
+  - Base source weights: Pin (1.4), Tab (1.2), Bookmark (1.0), History (0.7).
+  - Current window boost: Apply +0.15 to tabs located in the active Chrome window.
+  - Active tab penalty: Deduct 0.40 from the active tab or hide it completely based on user setting.
+- Acceptance Criteria:
+  - Open tabs in the current window rank above distant history items with similar match quality.
+  - Currently focused tab does not occupy the top result slot.
+
+#### Issue 4.2: Exponential Recency Decay Function
+- Title: `feat(ranking): exponential recency decay function`
+- Labels: `area:ranking`, `type:feat`, `priority:p1`
+- Effort: S
+- Description:
+  Apply time-decayed recency bonus to recently accessed items.
+- Requirements:
+  - Implement exponential decay: `B_recency = M_recency * e^(-lambda * delta_t)`.
+  - Configure half-life of 24 hours.
+  - Pages visited in the last hour receive near-maximum bonus.
+- Acceptance Criteria:
+  - Recently visited pages rank higher than pages visited days ago for identical text matches.
+
+#### Issue 4.3: Local Query-to-Destination Feedback Loop
+- Title: `feat(learning): local query-to-destination feedback loop`
+- Labels: `area:ranking`, `area:storage`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Build an on-device feedback loop that reinforces user selections for specific search terms.
+- Requirements:
+  - Record selection events `(normalizedQuery, canonicalUrl, timestamp)` in `chrome.storage.local`.
+  - Increment learned bonus when the same query is repeated.
+  - Apply 30-day linear decay to unused learned associations.
+  - Provide a one-click purge button to clear all learned rankings.
+- Acceptance Criteria:
+  - Selecting a specific dashboard for query `prod` promotes it to rank 1 after 2 to 3 selections.
+  - No data is sent across the network.
+
+#### Issue 4.4: Search Ranking Inspector and Debug Mode
+- Title: `feat(debug): search ranking inspector and debug mode`
+- Labels: `area:ranking`, `type:feat`, `priority:p2`
+- Effort: S
+- Description:
+  Provide a diagnostic ranking view for power users and developers.
+- Requirements:
+  - Triggered via `/debug` command or setting toggle.
+  - Display mathematical breakdown of each score component (match, source, window, recency, learned).
+- Acceptance Criteria:
+  - Selecting a row in debug mode shows exact contribution of each scoring factor.
+
+---
+
+### Milestone 5: Advanced Keyboard Interactions and Action Menu
+
+- Goal: Complete full keyboard control, selection stability during async loads, and contextual Actions Menu.
+- Target Specs: SPEC-06
+
+#### Issue 5.1: Navigation Modifier Keybindings
+- Title: `feat(nav): navigation modifier keybindings`
+- Labels: `area:keyboard`, `area:tabs`, `type:feat`, `priority:p1`
+- Effort: S
+- Description:
+  Support power-user chord modifiers when opening results.
+- Requirements:
+  - `Alt+Enter`: Force open in new tab (bypasses tab reuse).
+  - `Shift+Enter`: Open in background tab without stealing active focus.
+  - `Ctrl+Shift+Enter`: Open in new browser window.
+- Acceptance Criteria:
+  - Pressing `Alt+Enter` always creates a new tab regardless of open tabs.
+  - Pressing `Shift+Enter` opens tab in background and keeps current page focused.
+
+#### Issue 5.2: Anchor-Based Selection Stability for Asynchronous Streaming
+- Title: `feat(ui): anchor-based selection stability for asynchronous streaming`
+- Labels: `area:keyboard`, `area:overlay`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Prevent active cursor jumping when delayed search results arrive from slow sources.
+- Requirements:
+  - Anchor selection to item deterministic UUID rather than numerical index.
+  - When re-sorting list upon arrival of history results, recompute active index matching the anchored UUID.
+  - If anchored item is pruned, select nearest adjacent item.
+- Acceptance Criteria:
+  - Cursor never jumps to an unintended item while typing and navigating rapidly.
+
+#### Issue 5.3: Contextual Action Menu (Ctrl+K)
+- Title: `feat(actions): contextual action menu`
+- Labels: `area:keyboard`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Provide secondary actions on highlighted items via `Ctrl+K` or `RightArrow`.
+- Requirements:
+  - Open actions sub-menu with breadcrumb display: `Search > Item > Actions`.
+  - Actions include: Open, Open New Tab, Copy URL, Copy Markdown, Pin, Close Tab, Remove History.
+  - Actions menu is searchable by typing.
+  - Pressing Backspace on empty input returns to main search palette.
+- Acceptance Criteria:
+  - Power users can trigger secondary actions without taking hands off keyboard.
+
+#### Issue 5.4: Multi-Format Clipboard Operations
+- Title: `feat(clipboard): multi-format clipboard operations`
+- Labels: `area:keyboard`, `type:feat`, `priority:p2`
+- Effort: S
+- Description:
+  Allow instant copying of URL and title without opening the web page.
+- Requirements:
+  - `Ctrl+C`: Copy canonical URL to system clipboard.
+  - `Ctrl+Shift+C`: Copy Markdown anchor `[Title](URL)`.
+  - Show temporary confirmation badge on row.
+- Acceptance Criteria:
+  - Markdown anchor is copied formatted and immediately pasteable into editors.
+
+#### Issue 5.5: Multi-Select and Batch Tab Management
+- Title: `feat(batch): multi-select and batch tab management`
+- Labels: `area:keyboard`, `area:tabs`, `type:feat`, `priority:p2`
+- Effort: M
+- Description:
+  Support selecting multiple items for batch operations.
+- Requirements:
+  - `Shift+Down` and `Space` toggle selection checkboxes.
+  - Batch actions exposed via `Ctrl+K`: Close Selected Tabs, Bookmark Selected, Copy All URLs.
+- Acceptance Criteria:
+  - Users can select 5 tabs and close all 5 in a single operation.
+
+---
+
+### Milestone 6: Pins, Zero-State Dashboard and Tab Hygiene
+
+- Goal: Implement persistent polymorphic pins, the empty-state dashboard, and duplicate tab cleanup.
+- Target Specs: SPEC-07, SPEC-08
+
+#### Issue 6.1: Polymorphic Pinning Subsystem
+- Title: `feat(pins): polymorphic pinning subsystem`
+- Labels: `area:storage`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Provide first-class pin support with multiple target semantics.
+- Requirements:
+  - Toggle pin via `Alt+P`.
+  - Support URL Pin, Domain Pin, Search Pin, and Command Pin.
+  - Quick launch slots: Map top 9 pins to `Alt+1` through `Alt+9`.
+  - Persist pins in `chrome.storage.sync`.
+- Acceptance Criteria:
+  - Pressing `Alt+1` instantly navigates to Pin 1.
+  - Pinned items sync across Chrome browsers signed into the same profile.
+
+#### Issue 6.2: Default Empty Query Viewport (Zero-State Dashboard)
+- Title: `feat(dashboard): default empty query viewport`
+- Labels: `area:overlay`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Render a curated command dashboard when Navigator opens with an empty query.
+- Requirements:
+  - Section 1: Pinned Items ordered by user index.
+  - Section 2: Recently Accessed items from Navigator sessions.
+  - Section 3: Recently Closed Tabs for quick restoration.
+  - Section 4: Frequent Destinations based on visit statistics.
+- Acceptance Criteria:
+  - Opening Navigator presents immediate navigation targets without requiring typing.
+
+#### Issue 6.3: Duplicate Tab Detection and Batch Pruning
+- Title: `feat(cleanup): duplicate tab detection and batch pruning`
+- Labels: `area:tabs`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Identify open tabs sharing identical canonical URLs and provide automated cleanup.
+- Requirements:
+  - Scan all open tabs across windows and cluster by canonical URL.
+  - Expose command `Close Duplicate Tabs` (`/clean`).
+  - Retain oldest or most recently active tab in each cluster; close duplicates.
+- Acceptance Criteria:
+  - Command correctly closes redundant duplicate tabs and reports count closed.
+
+#### Issue 6.4: Chrome Tab Groups Integration
+- Title: `feat(groups): chrome tab groups integration`
+- Labels: `area:tabs`, `type:feat`, `priority:p2`
+- Effort: M
+- Description:
+  Search and manipulate Chrome tab groups.
+- Requirements:
+  - Filter tabs by group title or color via `/groups` or group name query.
+  - Display group chip badge on tab results.
+  - Actions: Collapse group, expand group, close group.
+- Acceptance Criteria:
+  - Users can search and manage tab groups directly from the command palette.
+
+---
+
+### Milestone 7: Configuration, Persistence and Backup
+
+- Goal: Build settings system, schema migrations, and JSON import/export.
+- Target Specs: SPEC-10, SPEC-12
+
+#### Issue 7.1: Tiered Storage Architecture and Sync
+- Title: `feat(storage): tiered storage architecture and sync`
+- Labels: `area:storage`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Implement three-tier storage model according to Chrome quota constraints.
+- Requirements:
+  - Tier 1: `chrome.storage.sync` for settings, pins, aliases, domain rules.
+  - Tier 2: `chrome.storage.local` for learned ranking data, recents, scratchpad.
+  - Tier 3: `IndexedDB` for tri-gram inverted search index and caches.
+- Acceptance Criteria:
+  - Settings and pins sync across devices without exceeding the 100KB sync quota.
+
+#### Issue 7.2: Automated Schema Migration Pipeline
+- Title: `feat(migration): automated schema migration pipeline`
+- Labels: `area:storage`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Provide safe, versioned migrations for persistent data.
+- Requirements:
+  - Include monotonic `schemaVersion` integer in stored configuration.
+  - Execute sequential migration functions during extension update.
+  - Implement corrupted store fallback to safe defaults with rescue backup.
+- Acceptance Criteria:
+  - Extension upgrades never wipe user pins, aliases, or settings.
+
+#### Issue 7.3: Appearance, Themes and Density Configuration
+- Title: `feat(settings): appearance, themes and density configuration`
+- Labels: `area:overlay`, `type:feat`, `priority:p2`
+- Effort: S
+- Description:
+  Provide appearance preferences in extension settings.
+- Requirements:
+  - Themes: System auto-detect, Dark, Light, High Contrast.
+  - Density modes: Compact (40px), Normal (52px), Comfortable (64px).
+  - Palette width: Small (540px), Normal (640px), Wide (760px).
+- Acceptance Criteria:
+  - Theme and density switch instantly without requiring page reload.
+
+#### Issue 7.4: JSON Configuration Export, Import and Reset
+- Title: `feat(backup): json configuration export, import and reset`
+- Labels: `area:storage`, `type:feat`, `priority:p2`
+- Effort: S
+- Description:
+  Allow full backup and restoration of user configurations.
+- Requirements:
+  - Export complete configuration as a validated JSON file.
+  - Import JSON with schema validation and conflict resolution (merge vs overwrite).
+  - Selective and full factory reset options.
+- Acceptance Criteria:
+  - Exported configuration file restores cleanly on a fresh browser profile.
+
+---
+
+### Milestone 8: Robustness, Web Compatibility and Accessibility
+
+- Goal: Guarantee flawless execution on complex web apps, full keyboard accessibility, and international input support.
+- Target Specs: SPEC-01, SPEC-11
+
+#### Issue 8.1: Web App Conflict Exclusions and Custom Keybindings
+- Title: `feat(compat): web app conflict exclusions and custom keybindings`
+- Labels: `area:compat`, `type:feat`, `priority:p1`
+- Effort: S
+- Description:
+  Prevent shortcut collisions on web applications with rich keyboard shortcuts.
+- Requirements:
+  - Configure domain exclusion list (e.g. `figma.com`, `docs.google.com`).
+  - Disable in-page `Shift+O` on excluded domains, preserving global browser shortcut.
+  - Support per-domain shortcut remapping.
+- Acceptance Criteria:
+  - Figma and Google Docs function without in-page Navigator shortcut interference.
+
+#### Issue 8.2: Fullscreen and Iframe Attachment Handling
+- Title: `feat(compat): fullscreen and iframe attachment handling`
+- Labels: `area:compat`, `type:feat`, `priority:p2`
+- Effort: S
+- Description:
+  Ensure overlay displays correctly during video fullscreen and inside iframes.
+- Requirements:
+  - Detect `document.fullscreenElement` and attach overlay host inside it.
+  - Restrict overlay rendering to top frame to avoid duplicate UI in iframes.
+- Acceptance Criteria:
+  - Navigator opens cleanly over fullscreen YouTube videos and presentations.
+
+#### Issue 8.3: WCAG 2.1 AA Accessibility and Focus Trap
+- Title: `feat(a11y): wcag 2.1 aa accessibility and focus trap`
+- Labels: `area:a11y`, `type:feat`, `priority:p1`
+- Effort: M
+- Description:
+  Implement complete ARIA semantics and focus management.
+- Requirements:
+  - Implement WAI-ARIA Combobox 1.2 pattern (`role="combobox"`, `role="listbox"`, `aria-activedescendant`).
+  - Add invisible `aria-live="polite"` region announcing result counts and active item.
+  - Trap Tab focus inside palette while open.
+- Acceptance Criteria:
+  - Screen readers (NVDA, VoiceOver) announce items and counts correctly.
+
+#### Issue 8.4: IME Composition and International Text Normalization
+- Title: `feat(i18n): ime composition and international text normalization`
+- Labels: `area:a11y`, `area:search`, `type:feat`, `priority:p1`
+- Effort: S
+- Description:
+  Support international keyboard input (CJK, Vietnamese) without accidental triggers.
+- Requirements:
+  - Listen to `compositionstart` and `compositionend`.
+  - Suppress Enter navigation and list traversal while `isComposing` is true.
+  - Normalize text using Unicode Canonical Decomposition (`NFKD`) to strip diacritics.
+- Acceptance Criteria:
+  - Striking Enter to commit an IME candidate does not navigate or close Navigator.
+  - Searching `cafe` matches `café`; searching `hanoi` matches `Hà Nội`.
+
+---
+
+### Milestone 9: Utilities, Tools and Omnibox Integration
+
+- Goal: Implement lightweight inline tools, Chrome Omnibox keyword, and URL launch commands.
+- Target Specs: SPEC-09
+
+#### Issue 9.1: Chrome Address Bar Omnibox Integration
+- Title: `feat(omnibox): chrome address bar omnibox integration`
+- Labels: `area:tools`, `type:feat`, `priority:p2`
+- Effort: M
+- Description:
+  Enable searching Chrome Navigator directly from Chrome's primary address bar.
+- Requirements:
+  - Register keyword `nav` with `chrome.omnibox`.
+  - Stream formatted suggestions into address bar dropdown.
+  - Selecting an entry performs tab reuse or navigation.
+- Acceptance Criteria:
+  - Typing `nav` followed by Space in Chrome address bar searches tabs and bookmarks.
+
+#### Issue 9.2: Sandboxed Inline Math Calculator
+- Title: `feat(tools): sandboxed inline math calculator`
+- Labels: `area:tools`, `type:feat`, `priority:p2`
+- Effort: S
+- Description:
+  Evaluate math expressions directly within the search bar.
+- Requirements:
+  - Trigger when query starts with `=` or matches numerical math expressions.
+  - Parse and evaluate using a sandboxed AST evaluator (never use `eval`).
+  - Pressing Enter copies result to clipboard and dismisses overlay.
+- Acceptance Criteria:
+  - Typing `= 1920 * 1080 / 2` calculates `1036800` and copies to clipboard on Enter.
+
+#### Issue 9.3: Direct URL Launcher and Hostname Autocomplete
+- Title: `feat(tools): direct url launcher and hostname autocomplete`
+- Labels: `area:tools`, `type:feat`, `priority:p2`
+- Effort: S
+- Description:
+  Detect when input is a valid URL or hostname and provide direct navigation.
+- Requirements:
+  - Recognize URLs, localhost with ports, and standard domain formats.
+  - Surface top action `Navigate to URL` bypassing search engine providers.
+- Acceptance Criteria:
+  - Pasting `http://localhost:3000/api` provides instant navigation option.
+
+#### Issue 9.4: Web Search Engine Fallbacks and URL Templates
+- Title: `feat(tools): web search engine fallbacks and url templates`
+- Labels: `area:tools`, `type:feat`, `priority:p2`
+- Effort: S
+- Description:
+  Provide fallback searches when local resources produce zero results.
+- Requirements:
+  - Present `Search Google for "query"` option in zero-result state.
+  - Support configurable URL templates (e.g. GitHub issues, NPM package lookup).
+- Acceptance Criteria:
+  - Selecting web fallback opens user search query in default web search engine.
+
+---
+
+### Milestone 10: Performance Optimization and Extensibility
+
+- Goal: Maximum performance under stress loads (10k+ bookmarks) and architecture for external plugins.
+- Target Specs: SPEC-13, SPEC-14
+
+#### Issue 10.1: In-Memory Tri-Gram Inverted Index
+- Title: `perf(scale): in-memory tri-gram inverted index`
+- Labels: `area:perf`, `area:search`, `type:perf`, `priority:p1`
+- Effort: L
+- Description:
+  Build tri-gram inverted index for sub-millisecond lookups across 10,000+ bookmarks.
+- Requirements:
+  - Index document tokens into 3-character keys mapped to document ID bitsets.
+  - Query candidates via fast set intersection.
+  - Maintain background memory footprint under 35MB.
+- Acceptance Criteria:
+  - Benchmark search across 10,000 bookmarks returns in under 5ms.
+
+#### Issue 10.2: Monotonic Request Cancellation and Concurrency Control
+- Title: `perf(concurrency): monotonic request cancellation and concurrency control`
+- Labels: `area:perf`, `type:perf`, `priority:p1`
+- Effort: S
+- Description:
+  Eliminate race conditions from rapid keystrokes using monotonic tokens.
+- Requirements:
+  - Tag outgoing queries with incrementing `monotonicRequestId`.
+  - Abort in-flight history searches with `AbortController`.
+  - Discard any received responses where `requestId < currentRequestId`.
+- Acceptance Criteria:
+  - Typing fast (e.g. 10 keystrokes in 1 second) never renders stale results from early keystrokes.
+
+#### Issue 10.3: Remote Resource Provider and Plugin Interface
+- Title: `feat(ext): remote resource provider and plugin interface`
+- Labels: `area:compat`, `type:feat`, `priority:p3`
+- Effort: M
+- Description:
+  Establish contract for optional external integrations (GitHub, Jira, Linear APIs).
+- Requirements:
+  - Define `SearchProvider` and `RemoteResource` TypeScript interfaces.
+  - Strict fault isolation: Remote network failures or timeouts never block local searches.
+  - Bypassed entirely when offline (`navigator.onLine === false`).
+- Acceptance Criteria:
+  - Future plugins can register search providers without altering core navigator code.
