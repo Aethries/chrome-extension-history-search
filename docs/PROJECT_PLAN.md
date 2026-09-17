@@ -64,12 +64,15 @@ When setting up your GitHub Project (v2), configure these custom fields:
 ### Milestone 0: Foundation and Host Injection
 
 - Goal: Construct Manifest V3 extension skeleton, background service worker lifecycle, and closed Shadow DOM overlay.
-- Target Specs: SPEC-00, SPEC-01
+- Target Specs: [SPEC-00 (Overview & Architecture)](specs/00-overview-and-architecture.md), [SPEC-01 (Invocation & Overlay)](specs/01-invocation-and-overlay.md)
 
 #### Issue 0.1: Manifest V3 Skeleton and Build Pipeline
 - Title: `feat(core): manifest v3 skeleton and build pipeline`
 - Labels: `area:overlay`, `type:feat`, `priority:p0`
 - Effort: S
+- Related Specs:
+  - [SPEC-00 Section 3: Chrome Extension Architecture (Manifest V3)](specs/00-overview-and-architecture.md)
+  - [SPEC-00 Section 4: Service Worker Lifecycle & State Recovery](specs/00-overview-and-architecture.md)
 - Description:
   Set up the base Chrome extension structure using TypeScript and a modern bundler.
 - Requirements:
@@ -86,6 +89,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(overlay): closed shadow root injection and css isolation`
 - Labels: `area:overlay`, `type:feat`, `priority:p0`
 - Effort: M
+- Related Specs:
+  - [SPEC-01 Section 4: Overlay Injection & DOM Isolation](specs/01-invocation-and-overlay.md)
+  - [SPEC-01 Section 5: Positioning, Geometry & Responsive Layout](specs/01-invocation-and-overlay.md)
 - Description:
   Inject the command palette container into web pages inside a closed Shadow DOM to guarantee total isolation from host page styles.
 - Requirements:
@@ -101,6 +107,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(input): in-page keystroke filtering and suppression`
 - Labels: `area:overlay`, `type:feat`, `priority:p0`
 - Effort: S
+- Related Specs:
+  - [SPEC-01 Section 1: Primary Invocation Shortcut & Keystroke Filtering](specs/01-invocation-and-overlay.md)
 - Description:
   Capture `Shift+O` key combination on the window capturing phase while suppressing activation when the user is typing in form controls or code editors.
 - Requirements:
@@ -115,6 +123,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(input): browser shortcut and palette toggle state machine`
 - Labels: `area:overlay`, `type:feat`, `priority:p0`
 - Effort: S
+- Related Specs:
+  - [SPEC-01 Section 2: Browser-Level Global Shortcuts & Conflict Arbitration](specs/01-invocation-and-overlay.md)
+  - [SPEC-01 Section 3: Toggle Lifecycle & State Transitions](specs/01-invocation-and-overlay.md)
 - Description:
   Integrate Chrome Commands API for browser-level toggling and manage overlay state transitions.
 - Requirements:
@@ -130,12 +141,15 @@ When setting up your GitHub Project (v2), configure these custom fields:
 ### Milestone 1: Minimum Viable Palette and Tab Switcher
 
 - Goal: Complete the core loop `Open -> Type -> Navigate` for open browser tabs across all windows.
-- Target Specs: SPEC-06, SPEC-07
+- Target Specs: [SPEC-06 (Keyboard & User Interaction)](specs/06-keyboard-and-user-interaction.md), [SPEC-07 (Navigation & Tab Management)](specs/07-navigation-and-tab-management.md)
 
 #### Issue 1.1: Search Input Autofocus and Virtual Result List
 - Title: `feat(ui): search input autofocus and virtual result list`
 - Labels: `area:overlay`, `area:keyboard`, `type:feat`, `priority:p0`
 - Effort: M
+- Related Specs:
+  - [SPEC-01 Section 7: Search Input Mechanics & Autofocus](specs/01-invocation-and-overlay.md)
+  - [SPEC-05 Section 6: Result Row Visual Structure](specs/05-unified-results-and-deduplication.md)
 - Description:
   Implement palette UI containing the search input box and a high-performance result list.
 - Requirements:
@@ -150,6 +164,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(tabs): multi-window tab provider and reactive cache`
 - Labels: `area:tabs`, `type:feat`, `priority:p0`
 - Effort: M
+- Related Specs:
+  - [SPEC-07 Section 1: Primary Navigation Execution Semantics](specs/07-navigation-and-tab-management.md)
+  - [SPEC-07 Section 7: Multi-Window Indexing & Scopes](specs/07-navigation-and-tab-management.md)
 - Description:
   Retrieve and maintain an in-memory index of open tabs across all Chrome windows.
 - Requirements:
@@ -164,6 +181,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(nav): tab reuse and window focusing navigation`
 - Labels: `area:tabs`, `type:feat`, `priority:p0`
 - Effort: S
+- Related Specs:
+  - [SPEC-07 Section 2: Existing-Tab Detection & Window Switching Protocol](specs/07-navigation-and-tab-management.md)
+  - [SPEC-07 Section 3: Tab Equality & Matching Strategies](specs/07-navigation-and-tab-management.md)
 - Description:
   Switch to existing open tab when selected, bringing its parent window to focus.
 - Requirements:
@@ -179,6 +199,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(keyboard): keyboard navigation and boundary wrapping`
 - Labels: `area:keyboard`, `type:feat`, `priority:p0`
 - Effort: S
+- Related Specs:
+  - [SPEC-06 Section 1: Primary Keyboard Navigation Controls](specs/06-keyboard-and-user-interaction.md)
+  - [SPEC-06 Section 3: Cyclic Selection Boundaries (Wrap-Around)](specs/06-keyboard-and-user-interaction.md)
 - Description:
   Provide responsive keyboard navigation through result rows.
 - Requirements:
@@ -195,12 +218,16 @@ When setting up your GitHub Project (v2), configure these custom fields:
 ### Milestone 2: Universal Retrieval and Deduplication
 
 - Goal: Expand search to Bookmarks and Browsing History, with URL canonicalization and cross-source deduplication.
-- Target Specs: SPEC-03, SPEC-05
+- Target Specs: [SPEC-03 (Search Engine & Matching)](specs/03-search-engine-and-matching.md), [SPEC-05 (Unified Results & Deduplication)](specs/05-unified-results-and-deduplication.md)
 
 #### Issue 2.1: Bookmarks and History Data Providers
 - Title: `feat(search): bookmarks and history data providers`
 - Labels: `area:search`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-03 Section 1: Universal Search Architecture](specs/03-search-engine-and-matching.md)
+  - [SPEC-03 Section 6: Bookmark Hierarchy Traversal](specs/03-search-engine-and-matching.md)
+  - [SPEC-03 Section 7: History Search Integration](specs/03-search-engine-and-matching.md)
 - Description:
   Connect Chrome Bookmarks and History APIs to the federated search engine.
 - Requirements:
@@ -215,6 +242,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(url): canonical url normalization and tracking sanitizer`
 - Labels: `area:search`, `type:feat`, `priority:p1`
 - Effort: S
+- Related Specs:
+  - [SPEC-05 Section 1: URL Normalization Engine & Canonical Identity](specs/05-unified-results-and-deduplication.md)
+  - [SPEC-05 Section 2: Tracking Parameter Sanitization](specs/05-unified-results-and-deduplication.md)
 - Description:
   Transform raw URLs into standardized canonical representations to enable deduplication and clean matching.
 - Requirements:
@@ -228,6 +258,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(search): cross-source entity deduplication pipeline`
 - Labels: `area:search`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-05 Section 4: Result Type System](specs/05-unified-results-and-deduplication.md)
+  - [SPEC-05 Section 5: Cross-Source Entity Deduplication](specs/05-unified-results-and-deduplication.md)
 - Description:
   Merge multi-source occurrences of the same canonical URL into a single unified result item.
 - Requirements:
@@ -242,6 +275,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(search): multi-tier matching engine`
 - Labels: `area:search`, `type:feat`, `priority:p1`
 - Effort: L
+- Related Specs:
+  - [SPEC-03 Section 3: Multi-Tier Matching Pipeline](specs/03-search-engine-and-matching.md)
+  - [SPEC-03 Section 4: Hostname & Domain Matching Rules](specs/03-search-engine-and-matching.md)
 - Description:
   Implement five-tier matching pipeline for search queries.
 - Requirements:
@@ -258,6 +294,10 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(ui): result row typography, match highlight and favicons`
 - Labels: `area:overlay`, `type:feat`, `priority:p1`
 - Effort: S
+- Related Specs:
+  - [SPEC-05 Section 6: Result Row Visual Structure](specs/05-unified-results-and-deduplication.md)
+  - [SPEC-05 Section 7: URL Typography & Smart Domain Names](specs/05-unified-results-and-deduplication.md)
+  - [SPEC-05 Section 8: Substring & Token Match Highlighting](specs/05-unified-results-and-deduplication.md)
 - Description:
   Render clean result items with visual badges, bold character highlights, and favicons.
 - Requirements:
@@ -274,6 +314,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(history): smart ephemeral redirect and oauth noise filtering`
 - Labels: `area:search`, `type:feat`, `priority:p1`
 - Effort: S
+- Related Specs:
+  - [SPEC-05 Section 2: Tracking Parameter Sanitization](specs/05-unified-results-and-deduplication.md)
+  - [SPEC-11 Section 2: History Privacy & Excluded Domain Scrubbing](specs/11-privacy-security-and-safety.md)
 - Description:
   Filter out ephemeral OAuth callbacks, auth redirects, and noisy intermediate pages from history search results.
 - Requirements:
@@ -288,12 +331,15 @@ When setting up your GitHub Project (v2), configure these custom fields:
 ### Milestone 3: Query Parser, Scopes and Custom Aliases
 
 - Goal: Implement EBNF query grammar, built-in slash scopes, and user-defined domain aliases.
-- Target Specs: SPEC-02
+- Target Specs: [SPEC-02 (Query Syntax & Parser)](specs/02-query-syntax-and-parser.md)
 
 #### Issue 3.1: Query Lexer and AST Generator
 - Title: `feat(parser): query lexer and ast generator`
 - Labels: `area:parser`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-02 Section 1: Formal Query Grammar & Lexer Architecture](specs/02-query-syntax-and-parser.md)
+  - [SPEC-02 Section 2: Concrete Parsing Walkthroughs](specs/02-query-syntax-and-parser.md)
 - Description:
   Build a lexer and parser that generates a typed Abstract Syntax Tree from search input.
 - Requirements:
@@ -309,6 +355,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(scope): built-in scope commands and fallback`
 - Labels: `area:parser`, `type:feat`, `priority:p1`
 - Effort: S
+- Related Specs:
+  - [SPEC-02 Section 3: Data-Driven Scope Registry & Configurable Built-in Scopes](specs/02-query-syntax-and-parser.md)
 - Description:
   Provide slash commands to restrict candidate search sources directly.
 - Requirements:
@@ -324,6 +372,10 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(alias): custom domain aliases and head-anchored prefixes`
 - Labels: `area:parser`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-02 Section 4: Custom Domain Scopes & Multi-Domain Mapping](specs/02-query-syntax-and-parser.md)
+  - [SPEC-02 Section 5: Custom Trigger Prefixes & Head-Anchoring](specs/02-query-syntax-and-parser.md)
+  - [SPEC-02 Section 6: Alias Conflict Resolution & Precedence Rules](specs/02-query-syntax-and-parser.md)
 - Description:
   Enable users to define custom triggers mapping to specific domains or wildcard paths.
 - Requirements:
@@ -339,6 +391,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(modifier): url navigation modifiers`
 - Labels: `area:parser`, `area:tabs`, `type:feat`, `priority:p1`
 - Effort: S
+- Related Specs:
+  - [SPEC-02 Section 7: Search Modifiers Specification](specs/02-query-syntax-and-parser.md)
 - Description:
   Allow users to control destination URL depth using `@query` and `@domain` modifiers.
 - Requirements:
@@ -355,6 +409,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `refactor(parser): data-driven scope registry with configurable default triggers`
 - Labels: `area:parser`, `type:refactor`, `priority:p0`
 - Effort: M
+- Related Specs:
+  - [SPEC-02 Section 3: Data-Driven Scope Registry & Configurable Built-in Scopes](specs/02-query-syntax-and-parser.md)
+  - [SPEC-12 Section 1: Comprehensive Configuration Schema](specs/12-configuration-and-appearance.md)
 - Description:
   Eliminate hardcoded `/tab`, `/bm`, and `/history` string checks in query parser. Implement a data-driven ScopeRegistry that initializes with system defaults but allows full user customization.
 - Requirements:
@@ -371,12 +428,17 @@ When setting up your GitHub Project (v2), configure these custom fields:
 ### Milestone 4: Ranking Math and Local Usage Learning
 
 - Goal: Implement multi-factor scoring formula, exponential recency decay, and on-device learning.
-- Target Specs: SPEC-04
+- Target Specs: [SPEC-04 (Ranking & Relevance)](specs/04-ranking-and-relevance.md)
 
 #### Issue 4.1: Multi-Factor Composite Scoring Formula
 - Title: `feat(ranking): multi-factor composite scoring formula`
 - Labels: `area:ranking`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-04 Section 1: Multi-Factor Scoring Mathematical Model](specs/04-ranking-and-relevance.md)
+  - [SPEC-04 Section 2: Source Weighting Hierarchy](specs/04-ranking-and-relevance.md)
+  - [SPEC-04 Section 3: Window Locality & Contextual Boosts](specs/04-ranking-and-relevance.md)
+  - [SPEC-04 Section 4: Active Tab Suppression Policy](specs/04-ranking-and-relevance.md)
 - Description:
   Combine match quality, source weights, window locality, and active tab status into a composite ranking score.
 - Requirements:
@@ -391,6 +453,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(ranking): exponential recency decay function`
 - Labels: `area:ranking`, `type:feat`, `priority:p1`
 - Effort: S
+- Related Specs:
+  - [SPEC-04 Section 5: Recency Boost & Exponential Decay Function](specs/04-ranking-and-relevance.md)
 - Description:
   Apply time-decayed recency bonus to recently accessed items.
 - Requirements:
@@ -404,6 +468,10 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(learning): local query-to-destination feedback loop`
 - Labels: `area:ranking`, `area:storage`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-04 Section 6: Access Frequency Multiplier](specs/04-ranking-and-relevance.md)
+  - [SPEC-04 Section 7: Local Frequency-Based Feedback](specs/04-ranking-and-relevance.md)
+  - [SPEC-04 Section 8: Learned Weight Decay](specs/04-ranking-and-relevance.md)
 - Description:
   Build an on-device feedback loop that reinforces user selections for specific search terms.
 - Requirements:
@@ -419,6 +487,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(debug): search ranking inspector and debug mode`
 - Labels: `area:ranking`, `type:feat`, `priority:p2`
 - Effort: S
+- Related Specs:
+  - [SPEC-04 Section 1: Multi-Factor Scoring Mathematical Model](specs/04-ranking-and-relevance.md)
+  - [SPEC-12 Section 5: Feature Flags & Experimental Labs](specs/12-configuration-and-appearance.md)
 - Description:
   Provide a diagnostic ranking view for power users and developers.
 - Requirements:
@@ -432,12 +503,15 @@ When setting up your GitHub Project (v2), configure these custom fields:
 ### Milestone 5: Advanced Keyboard Interactions and Action Menu
 
 - Goal: Complete full keyboard control, selection stability during async loads, and contextual Actions Menu.
-- Target Specs: SPEC-06
+- Target Specs: [SPEC-06 (Keyboard & User Interaction)](specs/06-keyboard-and-user-interaction.md)
 
 #### Issue 5.1: Navigation Modifier Keybindings
 - Title: `feat(nav): navigation modifier keybindings`
 - Labels: `area:keyboard`, `area:tabs`, `type:feat`, `priority:p1`
 - Effort: S
+- Related Specs:
+  - [SPEC-06 Section 1: Primary Keyboard Navigation Controls](specs/06-keyboard-and-user-interaction.md)
+  - [SPEC-07 Section 4: Modifier Keybindings for Tab Creation](specs/07-navigation-and-tab-management.md)
 - Description:
   Support power-user chord modifiers when opening results.
 - Requirements:
@@ -452,6 +526,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(ui): anchor-based selection stability for asynchronous streaming`
 - Labels: `area:keyboard`, `area:overlay`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-06 Section 2: Selection Stability Across Asynchronous Updates](specs/06-keyboard-and-user-interaction.md)
 - Description:
   Prevent active cursor jumping when delayed search results arrive from slow sources.
 - Requirements:
@@ -465,6 +541,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(actions): contextual action menu`
 - Labels: `area:keyboard`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-06 Section 5: Contextual Actions Menu (Ctrl+K)](specs/06-keyboard-and-user-interaction.md)
 - Description:
   Provide secondary actions on highlighted items via `Ctrl+K` or `RightArrow`.
 - Requirements:
@@ -479,6 +557,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(clipboard): multi-format clipboard operations`
 - Labels: `area:keyboard`, `type:feat`, `priority:p2`
 - Effort: S
+- Related Specs:
+  - [SPEC-06 Section 4: Clipboard Operations & Multi-Format Exporters](specs/06-keyboard-and-user-interaction.md)
 - Description:
   Allow instant copying of URL and title without opening the web page.
 - Requirements:
@@ -492,6 +572,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(batch): multi-select and batch tab management`
 - Labels: `area:keyboard`, `area:tabs`, `type:feat`, `priority:p2`
 - Effort: M
+- Related Specs:
+  - [SPEC-06 Section 6: Multi-Select & Batch Operations](specs/06-keyboard-and-user-interaction.md)
+  - [SPEC-07 Section 6: Tab Manipulation Actions Catalog](specs/07-navigation-and-tab-management.md)
 - Description:
   Support selecting multiple items for batch operations.
 - Requirements:
@@ -506,6 +589,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(ux): query draft recovery on accidental dismissal`
 - Labels: `area:overlay`, `type:feat`, `priority:p1`
 - Effort: S
+- Related Specs:
+  - [SPEC-01 Section 6: Overlay Dismissal Triggers](specs/01-invocation-and-overlay.md)
+  - [SPEC-06 Section 1: Primary Keyboard Navigation Controls](specs/06-keyboard-and-user-interaction.md)
 - Description:
   Prevent loss of context when a user accidentally clicks outside or presses Escape while composing a long search query.
 - Requirements:
@@ -520,12 +606,15 @@ When setting up your GitHub Project (v2), configure these custom fields:
 ### Milestone 6: Pins, Zero-State Dashboard and Tab Hygiene
 
 - Goal: Implement persistent polymorphic pins, the empty-state dashboard, and duplicate tab cleanup.
-- Target Specs: SPEC-07, SPEC-08
+- Target Specs: [SPEC-07 (Navigation & Tab Management)](specs/07-navigation-and-tab-management.md), [SPEC-08 (Pins, Favorites & Context)](specs/08-pins-favorites-and-context.md)
 
 #### Issue 6.1: Polymorphic Pinning Subsystem
 - Title: `feat(pins): polymorphic pinning subsystem`
 - Labels: `area:storage`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-08 Section 1: First-Class Pinning Subsystem](specs/08-pins-favorites-and-context.md)
+  - [SPEC-08 Section 2: Polymorphic Pin Semantics](specs/08-pins-favorites-and-context.md)
 - Description:
   Provide first-class pin support with multiple target semantics.
 - Requirements:
@@ -541,6 +630,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(dashboard): default empty query viewport`
 - Labels: `area:overlay`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-08 Section 4: Default Empty Query Viewport (Zero-State View)](specs/08-pins-favorites-and-context.md)
 - Description:
   Render a curated command dashboard when Navigator opens with an empty query.
 - Requirements:
@@ -555,6 +646,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(cleanup): duplicate tab detection and batch pruning`
 - Labels: `area:tabs`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-07 Section 6: Tab Manipulation Actions Catalog](specs/07-navigation-and-tab-management.md)
 - Description:
   Identify open tabs sharing identical canonical URLs and provide automated cleanup.
 - Requirements:
@@ -568,6 +661,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(groups): chrome tab groups integration`
 - Labels: `area:tabs`, `type:feat`, `priority:p2`
 - Effort: M
+- Related Specs:
+  - [SPEC-07 Section 8: Chrome Tab Groups Integration](specs/07-navigation-and-tab-management.md)
 - Description:
   Search and manipulate Chrome tab groups.
 - Requirements:
@@ -583,6 +678,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(audio): audible tabs hunting and quick mute toggle`
 - Labels: `area:tabs`, `type:feat`, `priority:p1`
 - Effort: S
+- Related Specs:
+  - [SPEC-07 Section 6: Tab Manipulation Actions Catalog](specs/07-navigation-and-tab-management.md)
 - Description:
   Solve the common user pain point of finding and silencing noisy background tabs.
 - Requirements:
@@ -598,12 +695,15 @@ When setting up your GitHub Project (v2), configure these custom fields:
 ### Milestone 7: Configuration, Persistence and Backup
 
 - Goal: Build settings system, schema migrations, and JSON import/export.
-- Target Specs: SPEC-10, SPEC-12
+- Target Specs: [SPEC-10 (Storage, Sync & Migrations)](specs/10-storage-sync-and-migrations.md), [SPEC-12 (Configuration & Appearance)](specs/12-configuration-and-appearance.md)
 
 #### Issue 7.1: Tiered Storage Architecture and Sync
 - Title: `feat(storage): tiered storage architecture and sync`
 - Labels: `area:storage`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-10 Section 1: Tiered Storage Subsystem Architecture](specs/10-storage-sync-and-migrations.md)
+  - [SPEC-10 Section 2: Cross-Device Synchronization Strategy](specs/10-storage-sync-and-migrations.md)
 - Description:
   Implement three-tier storage model according to Chrome quota constraints.
 - Requirements:
@@ -617,6 +717,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(migration): automated schema migration pipeline`
 - Labels: `area:storage`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-10 Section 3: Data Schema Versioning & Automated Migrations](specs/10-storage-sync-and-migrations.md)
+  - [SPEC-10 Section 4: Corrupt Store Fallback & Error Recovery](specs/10-storage-sync-and-migrations.md)
 - Description:
   Provide safe, versioned migrations for persistent data.
 - Requirements:
@@ -630,6 +733,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(settings): appearance, themes and density configuration`
 - Labels: `area:overlay`, `type:feat`, `priority:p2`
 - Effort: S
+- Related Specs:
+  - [SPEC-12 Section 1: Comprehensive Configuration Schema](specs/12-configuration-and-appearance.md)
+  - [SPEC-12 Section 2: Appearance Customization & Themes](specs/12-configuration-and-appearance.md)
 - Description:
   Provide appearance preferences in extension settings.
 - Requirements:
@@ -643,6 +749,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(backup): json configuration export, import and reset`
 - Labels: `area:storage`, `type:feat`, `priority:p2`
 - Effort: S
+- Related Specs:
+  - [SPEC-10 Section 5: JSON Schema Export & Import Engine](specs/10-storage-sync-and-migrations.md)
+  - [SPEC-10 Section 6: Backup Archiving & Factory Reset](specs/10-storage-sync-and-migrations.md)
 - Description:
   Allow full backup and restoration of user configurations.
 - Requirements:
@@ -658,6 +767,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(options): dedicated extension settings page (options.html)`
 - Labels: `area:storage`, `type:feat`, `priority:p0`
 - Effort: L
+- Related Specs:
+  - [SPEC-12 Section 1: Comprehensive Configuration Schema](specs/12-configuration-and-appearance.md)
+  - [SPEC-12 Section 6: Dedicated Extension Options Page](specs/12-configuration-and-appearance.md)
 - Description:
   Build a full-featured, dedicated Web Extension Options Page (`options.html`) providing an intuitive graphical settings dashboard.
 - Requirements:
@@ -675,12 +787,15 @@ When setting up your GitHub Project (v2), configure these custom fields:
 ### Milestone 8: Robustness, Web Compatibility and Accessibility
 
 - Goal: Guarantee flawless execution on complex web apps, full keyboard accessibility, and international input support.
-- Target Specs: SPEC-01, SPEC-11
+- Target Specs: [SPEC-01 (Invocation & Overlay)](specs/01-invocation-and-overlay.md), [SPEC-11 (Privacy, Security & Safety)](specs/11-privacy-security-and-safety.md)
 
 #### Issue 8.1: Web App Conflict Exclusions and Custom Keybindings
 - Title: `feat(compat): web app conflict exclusions and custom keybindings`
 - Labels: `area:compat`, `type:feat`, `priority:p1`
 - Effort: S
+- Related Specs:
+  - [SPEC-01 Section 1: Primary Invocation Shortcut & Keystroke Filtering](specs/01-invocation-and-overlay.md)
+  - [SPEC-12 Section 3: Domain Navigation & Rewrite Rules](specs/12-configuration-and-appearance.md)
 - Description:
   Prevent shortcut collisions on web applications with rich keyboard shortcuts.
 - Requirements:
@@ -694,6 +809,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(compat): fullscreen and iframe attachment handling`
 - Labels: `area:compat`, `type:feat`, `priority:p2`
 - Effort: S
+- Related Specs:
+  - [SPEC-01 Section 4: Overlay Injection & DOM Isolation](specs/01-invocation-and-overlay.md)
+  - [SPEC-01 Section 5: Positioning, Geometry & Responsive Layout](specs/01-invocation-and-overlay.md)
 - Description:
   Ensure overlay displays correctly during video fullscreen and inside iframes.
 - Requirements:
@@ -706,6 +824,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(a11y): wcag 2.1 aa accessibility and focus trap`
 - Labels: `area:a11y`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-01 Section 8: Accessibility & WCAG 2.1 AA Compliance](specs/01-invocation-and-overlay.md)
 - Description:
   Implement complete ARIA semantics and focus management.
 - Requirements:
@@ -719,6 +839,10 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(i18n): ime composition and international text normalization`
 - Labels: `area:a11y`, `area:search`, `type:feat`, `priority:p1`
 - Effort: S
+- Related Specs:
+  - [SPEC-01 Section 7: Search Input Mechanics & Autofocus](specs/01-invocation-and-overlay.md)
+  - [SPEC-03 Section 3: Multi-Tier Matching Pipeline](specs/03-search-engine-and-matching.md)
+  - [SPEC-12 Section 4: Internationalization (i18n) & Relative Timestamps](specs/12-configuration-and-appearance.md)
 - Description:
   Support international keyboard input (CJK, Vietnamese) without accidental triggers.
 - Requirements:
@@ -735,6 +859,9 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(onboarding): interactive keyboard shortcut playground and cheat-sheet`
 - Labels: `area:overlay`, `type:feat`, `priority:p2`
 - Effort: S
+- Related Specs:
+  - [SPEC-01 Section 1: Primary Invocation Shortcut & Keystroke Filtering](specs/01-invocation-and-overlay.md)
+  - [SPEC-06 Section 1: Primary Keyboard Navigation Controls](specs/06-keyboard-and-user-interaction.md)
 - Description:
   Provide an interactive onboarding guide on first install to teach core keyboard shortcuts without leaving the browser page.
 - Requirements:
@@ -749,12 +876,14 @@ When setting up your GitHub Project (v2), configure these custom fields:
 ### Milestone 9: Utilities, Tools and Omnibox Integration
 
 - Goal: Implement lightweight inline tools, Chrome Omnibox keyword, and URL launch commands.
-- Target Specs: SPEC-09
+- Target Specs: [SPEC-09 (Commands, Tools & Integrations)](specs/09-commands-tools-and-integrations.md)
 
 #### Issue 9.1: Chrome Address Bar Omnibox Integration
 - Title: `feat(omnibox): chrome address bar omnibox integration`
 - Labels: `area:tools`, `type:feat`, `priority:p2`
 - Effort: M
+- Related Specs:
+  - [SPEC-09 Section 2: Omnibox Integration (Keyword nav)](specs/09-commands-tools-and-integrations.md)
 - Description:
   Enable searching Chrome Navigator directly from Chrome's primary address bar.
 - Requirements:
@@ -768,6 +897,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(tools): sandboxed inline math calculator`
 - Labels: `area:tools`, `type:feat`, `priority:p2`
 - Effort: S
+- Related Specs:
+  - [SPEC-09 Section 4: Quick Math Parser & Inline Calculator](specs/09-commands-tools-and-integrations.md)
 - Description:
   Evaluate math expressions directly within the search bar.
 - Requirements:
@@ -781,6 +912,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(tools): direct url launcher and hostname autocomplete`
 - Labels: `area:tools`, `type:feat`, `priority:p2`
 - Effort: S
+- Related Specs:
+  - [SPEC-09 Section 3: URL Launcher & Direct Navigation](specs/09-commands-tools-and-integrations.md)
 - Description:
   Detect when input is a valid URL or hostname and provide direct navigation.
 - Requirements:
@@ -793,6 +926,8 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(tools): web search engine fallbacks and url templates`
 - Labels: `area:tools`, `type:feat`, `priority:p2`
 - Effort: S
+- Related Specs:
+  - [SPEC-09 Section 5: Web Search Engine Fallback & URL Templates](specs/09-commands-tools-and-integrations.md)
 - Description:
   Provide fallback searches when local resources produce zero results.
 - Requirements:
@@ -806,12 +941,15 @@ When setting up your GitHub Project (v2), configure these custom fields:
 ### Milestone 10: Performance Optimization and Extensibility
 
 - Goal: Maximum performance under stress loads (10k+ bookmarks) and architecture for external plugins.
-- Target Specs: SPEC-13, SPEC-14
+- Target Specs: [SPEC-13 (Performance & Scalability)](specs/13-performance-and-scalability.md), [SPEC-14 (Integrations & Extensibility)](specs/14-integrations-and-extensibility.md)
 
 #### Issue 10.1: In-Memory Tri-Gram Inverted Index
 - Title: `perf(scale): in-memory tri-gram inverted index`
 - Labels: `area:perf`, `area:search`, `type:perf`, `priority:p1`
 - Effort: L
+- Related Specs:
+  - [SPEC-03 Section 8: In-Memory Tri-Gram Inverted Index](specs/03-search-engine-and-matching.md)
+  - [SPEC-13 Section 2: High-Volume Scalability Benchmarks](specs/13-performance-and-scalability.md)
 - Description:
   Build tri-gram inverted index for sub-millisecond lookups across 10,000+ bookmarks.
 - Requirements:
@@ -825,6 +963,10 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `perf(concurrency): monotonic request cancellation and concurrency control`
 - Labels: `area:perf`, `type:perf`, `priority:p1`
 - Effort: S
+- Related Specs:
+  - [SPEC-13 Section 3: Tiered Asynchronous Result Streaming](specs/13-performance-and-scalability.md)
+  - [SPEC-13 Section 4: Search Cancellation & Stale Result Rejection](specs/13-performance-and-scalability.md)
+  - [SPEC-13 Section 5: Keystroke Debounce Architecture](specs/13-performance-and-scalability.md)
 - Description:
   Eliminate race conditions from rapid keystrokes using monotonic tokens.
 - Requirements:
@@ -838,6 +980,10 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `feat(ext): remote resource provider and plugin interface`
 - Labels: `area:compat`, `type:feat`, `priority:p3`
 - Effort: M
+- Related Specs:
+  - [SPEC-14 Section 1: Remote Integration Architecture](specs/14-integrations-and-extensibility.md)
+  - [SPEC-14 Section 2: Remote Resource Entity Contract](specs/14-integrations-and-extensibility.md)
+  - [SPEC-14 Section 4: Standard Provider Extension Interface](specs/14-integrations-and-extensibility.md)
 - Description:
   Establish contract for optional external integrations (GitHub, Jira, Linear APIs).
 - Requirements:
@@ -851,6 +997,11 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `test(core): unit and integration testing suite for parser and ranker`
 - Labels: `area:search`, `type:feat`, `priority:p1`
 - Effort: M
+- Related Specs:
+  - [SPEC-02 Section 1: Formal Query Grammar & Lexer Architecture](specs/02-query-syntax-and-parser.md)
+  - [SPEC-03 Section 3: Multi-Tier Matching Pipeline](specs/03-search-engine-and-matching.md)
+  - [SPEC-04 Section 1: Multi-Factor Scoring Mathematical Model](specs/04-ranking-and-relevance.md)
+  - [SPEC-05 Section 1: URL Normalization Engine & Canonical Identity](specs/05-unified-results-and-deduplication.md)
 - Description:
   Establish automated unit and integration tests using Vitest to prevent regressions in core algorithms.
 - Requirements:
@@ -865,6 +1016,10 @@ When setting up your GitHub Project (v2), configure these custom fields:
 - Title: `chore(release): chrome web store packaging and build automation`
 - Labels: `area:overlay`, `type:feat`, `priority:p2`
 - Effort: S
+- Related Specs:
+  - [SPEC-00 Section 3: Chrome Extension Architecture (Manifest V3)](specs/00-overview-and-architecture.md)
+  - [SPEC-11 Section 1: Local-First Privacy Directives & Zero External Telemetry](specs/11-privacy-security-and-safety.md)
+  - [SPEC-11 Section 5: URL Safety, Protocol Whitelist & Execution Defense](specs/11-privacy-security-and-safety.md)
 - Description:
   Automate production asset generation, extension packaging, and Chrome Web Store zip validation.
 - Requirements:

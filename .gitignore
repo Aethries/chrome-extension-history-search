@@ -1,0 +1,14 @@
+# Dependency directories
+node_modules/
+
+# Local utility scripts
+scripts/
+
+# Build and distribution
+dist/
+build/
+*.zip
+
+# Environment and OS
+.DS_Store
+*.log
