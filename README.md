@@ -33,8 +33,12 @@ Chrome Navigator is built for developers and power users who live in their brows
 
 - No Duplicate Tabs: If a destination URL is already open in any Chrome window, Navigator switches to it instantly instead of spawning clones.
 - True Sub-Millisecond Speed: In-memory tri-gram indexing and virtualized DOM rendering guarantee single-frame (under 16ms) keystroke response.
-- Scopes and Aliases: Use `/tab`, `/bm`, `/history`, or create custom aliases like `/jira`, `/gh`, or `GH` to narrow candidate domains instantly.
-- URL Depth Control: Use `@query` to keep full path and parameters, or `@domain` to jump directly to the root domain.
+- Data-Driven Scope Registry: Built-in scopes (/tab, /bm, /history, /audio) are fully customizable rather than hardcoded. Rebind /tab to /o or /bm to /b as you prefer.
+- Audio Tab Hunting: Quickly locate and silence noisy background tabs with the /audio scope or instant Mute toggle.
+- Query Draft Recovery: Accidental clicks outside or Escape dismissals within 10 seconds automatically restore your in-progress search query.
+- Smart History Noise Filter: Automatically de-prioritizes ephemeral OAuth callbacks, auth redirects, and tracking clutter.
+- URL Depth Control: Use @query to keep full path and parameters, or @domain to jump directly to the root domain.
+- Dedicated Graphical Settings: Full options dashboard (options.html) to configure keybindings, custom aliases, domain rules, and themes.
 - Local Adaptive Ranking: A private, on-device feedback loop boosts frequently and recently selected items for specific queries without cloud AI or external telemetry.
 - Isolated Shadow DOM: Injected via a closed Shadow Root, guaranteeing zero stylesheet conflicts with host web applications.
 - Zero-Telemetry Privacy: Everything runs locally. No tracking, no analytics, no external servers, full offline capability.
@@ -51,6 +55,7 @@ Navigator features a flexible, non-rigid query parser supporting scopes, modifie
 
 - `react`: Universal search across open tabs, bookmarks, and history.
 - `/tab jira`: Filter only open browser tabs matching `jira`.
+- `/audio`: Locate all background tabs currently producing sound or muted.
 - `/bm rust`: Search exclusively within Chrome bookmarks.
 - `/history pr`: Search recent browsing history entries.
 - `/jira bug login`: Scope search to company Jira domains (`*.atlassian.net`, `jira.company.com`).
@@ -75,6 +80,7 @@ Navigator features a flexible, non-rigid query parser supporting scopes, modifie
 | `Shift+Enter` | Palette | Open in background tab |
 | `Ctrl+Shift+Enter` | Palette | Open in new browser window |
 | `Ctrl+K` / `Right` | Palette | Open contextual Actions Menu |
+| `M` / `Space` | Palette | Instant mute or unmute toggle on highlighted tab |
 | `Ctrl+C` | Palette | Copy canonical URL to clipboard |
 | `Ctrl+Shift+C` | Palette | Copy Markdown anchor `[Title](URL)` |
 | `Alt+P` | Palette | Toggle pinned status for selected item |
@@ -135,15 +141,15 @@ $$\text{Score} = (S_{\text{match}} \times W_{\text{source}}) + B_{\text{window}}
 - Recency Decay: Exponential decay with a 24-hour half-life.
 - Adaptive Learning: Locally remembers query-to-selection pairs without sending data off-device.
 
-## Technical Specifications Suite
+## Technical Specifications Suite & Project Roadmap
 
 The project follows a comprehensive, modular specification standard. Full technical specifications and implementation plans are available:
 
-- [Project Plan, Milestones and GitHub Issues](docs/PROJECT_PLAN.md): Complete engineering plan with 11 milestones, 45 issue specifications, and label taxonomy.
+- [Project Plan, Milestones and GitHub Issues](docs/PROJECT_PLAN.md): Complete engineering plan with 11 milestones, 53 issue specifications, and label taxonomy.
 - [Master Index and Traceability Matrix](docs/specs/README.md): Requirement mapping for all 300 specifications.
 - [00. Overview and System Architecture](docs/specs/00-overview-and-architecture.md): Vision, MV3 component model, and lifecycles.
 - [01. Invocation, Overlay and Web Compatibility](docs/specs/01-invocation-and-overlay.md): Shortcuts, closed Shadow Root isolation, z-index, and accessibility.
-- [02. Query Syntax, Lexer and AST Parser](docs/specs/02-query-syntax-and-parser.md): Formal EBNF grammar, scopes, modifiers, and alias triggers.
+- [02. Query Syntax, Lexer and AST Parser](docs/specs/02-query-syntax-and-parser.md): Formal EBNF grammar, data-driven scope registry, modifiers, and alias triggers.
 - [03. Search Engine and Multi-Tier Matching](docs/specs/03-search-engine-and-matching.md): In-memory tri-gram index, token matching, and Unicode normalization.
 - [04. Ranking, Relevance and Local Learning](docs/specs/04-ranking-and-relevance.md): Scoring math, boosts, recency decay, and on-device feedback loops.
 - [05. Unified Results and Deduplication](docs/specs/05-unified-results-and-deduplication.md): Canonical URLs, parameter stripping, and result typography.
@@ -153,7 +159,7 @@ The project follows a comprehensive, modular specification standard. Full techni
 - [09. Commands, Utilities and Omnibox](docs/specs/09-commands-tools-and-integrations.md): Command palette mode, calculator, URL launcher, and Omnibox keyword `nav`.
 - [10. Persistence, Storage and Migrations](docs/specs/10-storage-sync-and-migrations.md): Three-tiered storage (`sync`, `local`, `IndexedDB`) and schema migrations.
 - [11. Privacy Guarantees and Safety Boundaries](docs/specs/11-privacy-security-and-safety.md): Zero telemetry, protocol whitelisting, and optional permissions.
-- [12. Configuration, Appearance and Themes](docs/specs/12-configuration-and-appearance.md): Settings schemas, density modes, and custom domain rules.
+- [12. Configuration, Appearance and Themes](docs/specs/12-configuration-and-appearance.md): Settings schemas, dedicated Options Page (`options.html`), density modes, and domain rules.
 - [13. Performance, Scalability and Concurrency](docs/specs/13-performance-and-scalability.md): Latency budgets, cancellation tokens, and stress profiles.
 - [14. Integrations and Extensibility](docs/specs/14-integrations-and-extensibility.md): Remote provider contracts and plugin architecture.
 
@@ -167,8 +173,8 @@ The project follows a comprehensive, modular specification standard. Full techni
 ### Setup
 
 ```bash
-git clone https://github.com/company/chrome-extension-navigator.git
-cd chrome-extension-navigator
+git clone https://github.com/Aethries/chrome-extension-history-search.git
+cd chrome-extension-history-search
 npm install
 npm run build
 ```

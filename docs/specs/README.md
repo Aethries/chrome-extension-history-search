@@ -1,4 +1,4 @@
-# Chrome Navigator — Technical Specification Suite
+# Chrome Navigator: Technical Specification Suite
 
 > **Version**: 1.0.0-draft  
 > **Target Platform**: Google Chrome / Chromium-based Browsers (Manifest V3)  
@@ -112,9 +112,9 @@ flowchart TD
 
 ---
 
-## Master Requirement Traceability Matrix (Sections 1 – 300)
+## Master Requirement Traceability Matrix (Sections 1 to 300)
 
-Every requirement specified in the original specification document (`docs/SPECS.md`) maps deterministically to its formal section in this specification suite:
+Every requirement specified in the original 300-point product requirements baseline maps deterministically to its formal section in this specification suite:
 
 | Original Item # | Original Title | Formal Specification Document | Target Section |
 | :---: | :--- | :--- | :--- |

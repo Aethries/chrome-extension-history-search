@@ -4,7 +4,7 @@ Welcome to the Chrome Navigator documentation repository.
 
 ## Documentation Structure
 
-- [Project Plan, Milestones and GitHub Issues](PROJECT_PLAN.md): Complete engineering plan with 11 milestones, 45 issue specifications, acceptance criteria, and GitHub label taxonomy.
+- [Project Plan, Milestones and GitHub Issues](PROJECT_PLAN.md): Complete engineering plan with 11 milestones, 53 issue specifications, acceptance criteria, and GitHub label taxonomy.
 - [Technical Specifications Suite (`docs/specs/`)](specs/README.md): The authoritative, modular technical specifications for Chrome Navigator. Contains 15 domain-specific documents covering system architecture, invocation, query parser, search engine, ranking math, deduplication, keyboard interaction, navigation semantics, pins, commands, storage tiering, privacy, configuration, performance, and integrations.
   - [Master Index and Requirement Traceability Matrix](specs/README.md): Maps all 300 functional requirements to specific technical documents and sections.
   - [00. Overview and Architecture](specs/00-overview-and-architecture.md)
