@@ -1,196 +1,256 @@
-# Chrome Navigator
+<div align="center">
 
-> Fast, keyboard-first universal command palette and navigator for Google Chrome.
+# ⚡ Chrome Navigator
 
-Modern browsing is fragmented across dozens of windows, hundreds of tabs, thousands of bookmarks, and deep browsing histories. Chrome Navigator unifies them into a single, instant command palette injected directly into web pages.
+**A blazing fast, keyboard-first universal command palette and fuzzy navigator for Chromium browsers.**
 
-Summon with a keystroke, type a fragment, and jump to the exact resource you need without touching the mouse.
+[![Manifest V3](https://img.shields.io/badge/Manifest-V3-success?logo=googlechrome&logoColor=white&style=for-the-badge)](https://developer.chrome.com/docs/extensions/mv3/intro/)
+[![Chromium](https://img.shields.io/badge/Platform-Chromium%20%7C%20Brave%20%7C%20Edge%20%7C%20Arc-blue?logo=googlechrome&logoColor=white&style=for-the-badge)](https://www.chromium.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue?logo=typescript&logoColor=white&style=for-the-badge)](https://www.typescriptlang.org)
+[![Framework](https://img.shields.io/badge/Framework-WXT%20%2B%20React-61dafb?logo=react&logoColor=black&style=for-the-badge)](https://wxt.dev)
+[![Specs](https://img.shields.io/badge/Specs-15%20Docs%20%7C%20300%20Reqs-indigo?style=for-the-badge)](docs/specs/README.md)
+[![Privacy](https://img.shields.io/badge/Privacy-100%25%20On--Device%20%7C%20Zero%20Telemetry-green?style=for-the-badge)](docs/specs/11-privacy-security-and-safety.md)
+[![License](https://img.shields.io/badge/License-MIT%20%2F%20Apache--2.0-purple?style=for-the-badge)](LICENSE)
 
-```
-Open -> Type -> Navigate
-```
+<p align="center">
+  <a href="#overview">Overview</a> •
+  <a href="#key-features">Key Features</a> •
+  <a href="#command-palette-preview">Palette Preview</a> •
+  <a href="#query-syntax--cheat-sheet">Query Syntax</a> •
+  <a href="#keybinding-reference">Keybindings</a> •
+  <a href="#system-architecture">Architecture</a> •
+  <a href="#technical-specifications--roadmap">Specs & Roadmap</a> •
+  <a href="#installation--development">Quickstart</a>
+</p>
 
-```
-+----------------------------------------------------------------------+
-| > Search tabs, bookmarks, history, and commands...                   |
-+----------------------------------------------------------------------+
-| GitHub / my-project                                      TAB [Win 1] |
-| github.com/company/my-project                                        |
-|                                                                      |
-| GitHub: Where the world builds software                  BM          |
-| github.com                                               /Work/Dev   |
-|                                                                      |
-| Pull Request #42: Add Fuzzy Matching Pipeline            HISTORY     |
-| github.com/company/my-project/pull/42                                |
-+----------------------------------------------------------------------+
-| Enter Open   Alt+Enter New Tab   Shift+Enter Background   Ctrl+K Actions |
-+----------------------------------------------------------------------+
-```
+</div>
 
-## Why Chrome Navigator?
+---
 
-Chrome Navigator is built for developers and power users who live in their browser and refuse to waste time hunting through tabs, folders, or history pages.
+## Overview
 
-- No Duplicate Tabs: If a destination URL is already open in any Chrome window, Navigator switches to it instantly instead of spawning clones.
-- True Sub-Millisecond Speed: In-memory tri-gram indexing and virtualized DOM rendering guarantee single-frame (under 16ms) keystroke response.
-- Data-Driven Scope Registry: Built-in scopes (/tab, /bm, /history, /audio) are fully customizable rather than hardcoded. Rebind /tab to /o or /bm to /b as you prefer.
-- Audio Tab Hunting: Quickly locate and silence noisy background tabs with the /audio scope or instant Mute toggle.
-- Query Draft Recovery: Accidental clicks outside or Escape dismissals within 10 seconds automatically restore your in-progress search query.
-- Smart History Noise Filter: Automatically de-prioritizes ephemeral OAuth callbacks, auth redirects, and tracking clutter.
-- URL Depth Control: Use @query to keep full path and parameters, or @domain to jump directly to the root domain.
-- Dedicated Graphical Settings: Full options dashboard (options.html) to configure keybindings, custom aliases, domain rules, and themes.
-- Local Adaptive Ranking: A private, on-device feedback loop boosts frequently and recently selected items for specific queries without cloud AI or external telemetry.
-- Isolated Shadow DOM: Injected via a closed Shadow Root, guaranteeing zero stylesheet conflicts with host web applications.
-- Zero-Telemetry Privacy: Everything runs locally. No tracking, no analytics, no external servers, full offline capability.
+Modern browsing is fragmented across dozens of open windows, hundreds of tabs, thousands of bookmarks, and deep browsing histories. **Chrome Navigator** unifies them into a single, instant command palette injected directly into any web page.
 
-## Query Syntax
+Summon with a keystroke, type a fragment, and navigate directly to your target without touching the mouse or waiting on slow browser menus.
 
-Navigator features a flexible, non-rigid query parser supporting scopes, modifiers, custom triggers, exact phrases, and exclusions.
-
-```
-[modifiers] [scope] [alias] [filters] [text]
+```text
+Keystroke (Shift+O) ──> Fuzzy Search ──> Instant Tab Reuse / Navigation
 ```
 
-### Examples
+---
 
-- `react`: Universal search across open tabs, bookmarks, and history.
-- `/tab jira`: Filter only open browser tabs matching `jira`.
-- `/audio`: Locate all background tabs currently producing sound or muted.
-- `/bm rust`: Search exclusively within Chrome bookmarks.
-- `/history pr`: Search recent browsing history entries.
-- `/jira bug login`: Scope search to company Jira domains (`*.atlassian.net`, `jira.company.com`).
-- `GH react`: Head-anchored custom prefix matching GitHub repositories.
-- `@domain /jira login`: Strip path and parameters, navigating directly to the Jira root domain.
-- `@query /history pull/42`: Preserve complete query parameters and deep paths from history.
-- `"pull request" -draft`: Match exact phrase `"pull request"` while excluding items containing `draft`.
-- `= 1920 * 1080 / 2`: Built-in sandboxed calculator mode.
+## Key Features
+
+| Capability | Implementation | Benefit |
+| :--- | :--- | :--- |
+| **Zero Duplicate Tabs** | Smart Canonical Matching | Switches to existing tabs across all Chrome windows instead of spawning clones. |
+| **Sub-Millisecond Search** | In-Memory Tri-Gram Cache | Keystroke-to-render cycle runs in single-frame budget (<16ms). |
+| **Data-Driven Scope Registry** | Extensible Parser AST | Flexible `/tab`, `/bm`, `/history`, `/audio`, and custom prefix triggers. |
+| **Audio Tab Hunter** | Background Media Detection | Instantly identify noisy tabs and mute/unmute with a single keystroke (`M`). |
+| **Isolated Closed Shadow DOM** | Encapsulated Content Root | Guaranteed 0% style bleeding or DOM conflicts with host applications. |
+| **On-Device Adaptive Learning** | Local Decay & Frequency Math | Remembers frequent selections locally without cloud AI or external telemetry. |
+| **Query Draft Recovery** | 10-Second Session Cache | Accidental dismissals or outside clicks immediately restore your active query. |
+| **Noise-Filtered History** | Smart URL Sanitization | Filters ephemeral OAuth tokens, auth redirects, and tracking clutter. |
+| **100% Local Privacy** | Strict Manifest V3 Sandbox | No accounts, no external network requests, zero telemetry. |
+
+---
+
+## Command Palette Preview
+
+```text
+┌──────────────────────────────────────────────────────────────────────────────┐
+│  > Search tabs, bookmarks, history, and commands...                          │
+├──────────────────────────────────────────────────────────────────────────────┤
+│  ⚡ GitHub / chrome-extension-history-search                     TAB [Win 1]  │
+│    https://github.com/Aethries/chrome-extension-history-search               │
+│                                                                              │
+│  ★  GitHub: Where the world builds software                     BM           │
+│    https://github.com                                           /Work/Dev    │
+│                                                                              │
+│  ⏱  Pull Request #42: Add Fuzzy Matching Pipeline               HISTORY      │
+│    https://github.com/company/my-project/pull/42                             │
+│                                                                              │
+│  🔊 YouTube Music - Playing                                     TAB [Audio]  │
+│    https://music.youtube.com                                                 │
+├──────────────────────────────────────────────────────────────────────────────┤
+│  Enter Open  │  Alt+Enter New Tab  │  Shift+Enter Background  │  Ctrl+K Menu │
+└──────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Query Syntax & Cheat Sheet
+
+Navigator utilizes a non-rigid, modular query lexer and AST parser:
+
+```text
+[modifiers]  [scope]  [alias]  [filters]  [query text]
+```
+
+### Common Patterns
+
+* **Universal Search**: `react state` — Search tabs, bookmarks, and history simultaneously.
+* **Scope Filtering**:
+  * `/tab jira` — Filter only active browser tabs.
+  * `/bm rust` — Filter Chrome bookmarks exclusively.
+  * `/history pr` — Search deep browsing history entries.
+  * `/audio` — List all tabs currently playing audio or muted.
+* **Aliases & Domain Scopes**:
+  * `/jira bug login` — Search specifically within Jira domains (`*.atlassian.net`).
+  * `GH react` — Custom head-anchored prefix matching GitHub repositories.
+* **Depth Modifiers**:
+  * `@domain /jira login` — Strip path/parameters and jump straight to the root domain.
+  * `@query /history pull/42` — Preserve deep parameters and query paths.
+* **Exact Matching & Exclusion**:
+  * `"pull request" -draft` — Match exact phrase while excluding items containing `draft`.
+* **Inline Calculator**:
+  * `= 1920 * 1080 / 2` — Built-in sandboxed arithmetic calculation.
+
+---
 
 ## Keybinding Reference
 
-| Shortcut | Context | Behavior |
+### Summon & Dismiss
+
+| Shortcut | Context | Action |
 | :--- | :--- | :--- |
-| `Shift+O` | In-Page | Summon or dismiss the Navigator command palette |
-| `Command+Shift+O` / `Ctrl+Shift+O` | Browser Global | Global browser command to toggle Navigator |
-| `Down` / `Ctrl+N` | Palette | Move selection down |
-| `Up` / `Ctrl+P` | Palette | Move selection up |
-| `Home` / `PageUp` | Palette | Jump to top result |
-| `End` / `PageDown` | Palette | Jump to bottom result |
-| `Enter` | Palette | Activate item (switch tab or navigate) |
-| `Alt+Enter` | Palette | Force open in new tab (bypasses tab reuse) |
-| `Shift+Enter` | Palette | Open in background tab |
-| `Ctrl+Shift+Enter` | Palette | Open in new browser window |
-| `Ctrl+K` / `Right` | Palette | Open contextual Actions Menu |
-| `M` / `Space` | Palette | Instant mute or unmute toggle on highlighted tab |
-| `Ctrl+C` | Palette | Copy canonical URL to clipboard |
-| `Ctrl+Shift+C` | Palette | Copy Markdown anchor `[Title](URL)` |
-| `Alt+P` | Palette | Toggle pinned status for selected item |
-| `Alt+1` ... `Alt+9` | Palette | Instant jump to Quick Slot / Pin 1 through 9 |
-| `Shift+Down` / `Tab` | Palette | Toggle multi-select checkbox for batch actions |
-| `Escape` | Palette | First press clears query; second press dismisses |
+| `Shift + O` | In-Page | Summon or dismiss the Navigator command palette |
+| `Cmd+Shift+O` / `Ctrl+Shift+O` | Browser Global | Global browser hotkey to activate overlay |
+| `Escape` | Palette | First press clears active query; second press dismisses |
+
+### Navigation & Actions
+
+| Shortcut | Action |
+| :--- | :--- |
+| `Down` / `Ctrl + N` | Move highlight down |
+| `Up` / `Ctrl + P` | Move highlight up |
+| `Home` / `PageUp` | Jump to top result |
+| `End` / `PageDown` | Jump to bottom result |
+| `Enter` | Activate selected item (switch tab or navigate) |
+| `Alt + Enter` | Force open in new foreground tab (bypasses tab reuse) |
+| `Shift + Enter` | Open in background tab |
+| `Ctrl + Shift + Enter` | Open in new browser window |
+| `Ctrl + K` / `Right` | Open contextual Actions Menu |
+| `M` / `Space` | Instant mute/unmute toggle on highlighted audio tab |
+| `Ctrl + C` | Copy canonical URL to clipboard |
+| `Ctrl + Shift + C` | Copy Markdown link `[Title](URL)` |
+| `Alt + P` | Toggle pinned state for item |
+| `Alt + 1` .. `Alt + 9` | Instant jump to Quick Slot / Pin 1 through 9 |
+| `Shift + Down` / `Tab` | Toggle multi-select checkbox for batch operations |
+
+---
 
 ## System Architecture
 
-Chrome Navigator runs under Google Chrome's Manifest V3 architecture with strict separation between host DOM execution and background indexing:
+Chrome Navigator runs under Google Chrome's **Manifest V3** specification with complete decoupling between web page DOM contexts and background search orchestration:
 
-```
+```text
 [ Host Web Page (Any Origin) ]
-               |
-    (Shift+O Keystroke Filter)
-               v
+               │
+      (Shift+O Keystroke)
+               ▼
   [ Content Script (Isolated) ]
-               |
-  [ Closed Shadow Root UI ] <---------------+
-               |                             |
-     (Chrome Runtime IPC)                    |
-               v                             |
-[ Service Worker Coordinator ]               |
-               |                             |
-      +--------+--------+                    |
-      |                 |                    |
-[ In-Memory Index ]  [ Browser APIs ]        |
-  (Tri-gram Cache)    - chrome.tabs          |
-  (Pins & Aliases)    - chrome.bookmarks     |
-                      - chrome.history       |
-      |                 |                    |
-      +--------+--------+                    |
-               |                             |
-    [ Multi-Tier Ranker ]                    |
-    (Exact / Prefix / Fuzzy)                 |
-    (Recency & Frequency)                    |
-               |                             |
-               +---(Stream Ranked Results)---+
+               │
+  [ Closed Shadow Root UI ] ◄───────────────┐
+               │                            │
+     (Chrome Runtime IPC)                   │
+               ▼                            │
+[ Service Worker Coordinator ]              │
+               │                            │
+      ┌────────┴────────┐                   │
+      ▼                 ▼                   │
+[ In-Memory Index ]  [ Chrome APIs ]        │
+  • Tri-gram Cache     • chrome.tabs        │
+  • Pins & Aliases     • chrome.bookmarks   │
+                       • chrome.history     │
+      │                 │                   │
+      └────────┬────────┘                   │
+               ▼                            │
+     [ Multi-Tier Ranker ]                  │
+     • Exact / Prefix / Fuzzy               │
+     • Recency & Decay                      │
+               │                            │
+               └────(Stream Ranked Results)─┘
 ```
 
-### Multi-Tier Search Pipeline
+### Mathematical Ranking Formula
 
-1. Tier 1: Exact Match (Title, domain, or canonical URL).
-2. Tier 2: Prefix Match (Token and word-boundary starts).
-3. Tier 3: Word Boundary Substring Match.
-4. Tier 4: Unordered Token Match (Tokens matched in any position).
-5. Tier 5: Fuzzy Alignment (Smith-Waterman distance with typo tolerance).
-
-### Scoring Mathematical Model
-
-Candidate ranking balances relevance, source priority, window locality, and usage learning:
+Candidate ranking computes relevance, source tier, window locality, and adaptive weights:
 
 $$\text{Score} = (S_{\text{match}} \times W_{\text{source}}) + B_{\text{window}} - P_{\text{active}} + B_{\text{recency}} + B_{\text{frequency}} + B_{\text{learned}} + B_{\text{context}}$$
 
-- Source Weights: Pinned ($1.4$) > Tabs ($1.2$) > Bookmarks ($1.0$) > History ($0.7$).
-- Window Locality: $+0.15$ boost for tabs located in the current focused window.
-- Active Tab Demotion: Current tab penalized by $-0.40$ or hidden to prioritize navigation targets.
-- Recency Decay: Exponential decay with a 24-hour half-life.
-- Adaptive Learning: Locally remembers query-to-selection pairs without sending data off-device.
+* **Source Weights ($W_{\text{source}}$)**: Pinned ($1.4$) > Tabs ($1.2$) > Bookmarks ($1.0$) > History ($0.7$).
+* **Window Locality ($B_{\text{window}}$)**: $+0.15$ boost for tabs in the active focused window.
+* **Active Tab Demotion ($P_{\text{active}}$)**: Current tab penalized by $-0.40$ to favor navigation targets.
+* **Recency Decay ($B_{\text{recency}}$)**: Half-life exponential decay over 24 hours.
+* **Adaptive Learning ($B_{\text{learned}}$)**: On-device reinforcement for frequent query-selection pairs.
 
-## Technical Specifications Suite & Project Roadmap
+---
 
-The project follows a comprehensive, modular specification standard. Full technical specifications and implementation plans are available:
+## Technical Specifications & Roadmap
 
-- [Project Plan, Milestones and GitHub Issues](docs/PROJECT_PLAN.md): Complete engineering plan with 11 milestones, 53 issue specifications, and label taxonomy.
-- [Master Index and Traceability Matrix](docs/specs/README.md): Requirement mapping for all 300 specifications.
-- [00. Overview and System Architecture](docs/specs/00-overview-and-architecture.md): Vision, MV3 component model, and lifecycles.
-- [01. Invocation, Overlay and Web Compatibility](docs/specs/01-invocation-and-overlay.md): Shortcuts, closed Shadow Root isolation, z-index, and accessibility.
-- [02. Query Syntax, Lexer and AST Parser](docs/specs/02-query-syntax-and-parser.md): Formal EBNF grammar, data-driven scope registry, modifiers, and alias triggers.
-- [03. Search Engine and Multi-Tier Matching](docs/specs/03-search-engine-and-matching.md): In-memory tri-gram index, token matching, and Unicode normalization.
-- [04. Ranking, Relevance and Local Learning](docs/specs/04-ranking-and-relevance.md): Scoring math, boosts, recency decay, and on-device feedback loops.
-- [05. Unified Results and Deduplication](docs/specs/05-unified-results-and-deduplication.md): Canonical URLs, parameter stripping, and result typography.
-- [06. Keyboard Navigation and Interaction](docs/specs/06-keyboard-and-user-interaction.md): Focus management, selection stability, and action menus.
-- [07. Navigation Semantics and Tab Operations](docs/specs/07-navigation-and-tab-management.md): Tab equality strategies, window focusing, and duplicate cleanup.
-- [08. Pins, Favorites and Workspaces](docs/specs/08-pins-favorites-and-context.md): Polymorphic pins, zero-state dashboard, tagging, and workspaces.
-- [09. Commands, Utilities and Omnibox](docs/specs/09-commands-tools-and-integrations.md): Command palette mode, calculator, URL launcher, and Omnibox keyword `nav`.
-- [10. Persistence, Storage and Migrations](docs/specs/10-storage-sync-and-migrations.md): Three-tiered storage (`sync`, `local`, `IndexedDB`) and schema migrations.
-- [11. Privacy Guarantees and Safety Boundaries](docs/specs/11-privacy-security-and-safety.md): Zero telemetry, protocol whitelisting, and optional permissions.
-- [12. Configuration, Appearance and Themes](docs/specs/12-configuration-and-appearance.md): Settings schemas, dedicated Options Page (`options.html`), density modes, and domain rules.
-- [13. Performance, Scalability and Concurrency](docs/specs/13-performance-and-scalability.md): Latency budgets, cancellation tokens, and stress profiles.
-- [14. Integrations and Extensibility](docs/specs/14-integrations-and-extensibility.md): Remote provider contracts and plugin architecture.
+Chrome Navigator is developed against a formal, 15-document architectural specification suite covering **300 explicit requirements**:
+
+| Specification | Document | Focus |
+| :--- | :--- | :--- |
+| **00. Architecture** | [00-overview-and-architecture.md](docs/specs/00-overview-and-architecture.md) | MV3 lifecycle, memory budgeting, IPC contracts |
+| **01. Overlay** | [01-invocation-and-overlay.md](docs/specs/01-invocation-and-overlay.md) | Closed Shadow Root isolation, CSS scoping, z-index |
+| **02. Query Parser** | [02-query-syntax-and-parser.md](docs/specs/02-query-syntax-and-parser.md) | EBNF grammar, token lexer, AST generation, scopes |
+| **03. Search Engine** | [03-search-engine-and-matching.md](docs/specs/03-search-engine-and-matching.md) | Tri-gram indexing, Unicode folding, token matches |
+| **04. Relevance** | [04-ranking-and-relevance.md](docs/specs/04-ranking-and-relevance.md) | Scoring mathematics, recency decay, local learning |
+| **05. Deduplication** | [05-unified-results-and-deduplication.md](docs/specs/05-unified-results-and-deduplication.md) | Canonical URL deduplication, parameter stripping |
+| **06. Keyboard** | [06-keyboard-and-user-interaction.md](docs/specs/06-keyboard-and-user-interaction.md) | Selection stability, action menus, ARIA compliance |
+| **07. Tab Operations** | [07-navigation-and-tab-management.md](docs/specs/07-navigation-and-tab-management.md) | Cross-window focus, tab equality, discard actions |
+| **08. Pins & Workspaces**| [08-pins-favorites-and-context.md](docs/specs/08-pins-favorites-and-context.md) | Polymorphic pinned slots, tags, zero-state dashboard |
+| **09. Tools & Omnibox** | [09-commands-tools-and-integrations.md](docs/specs/09-commands-tools-and-integrations.md) | Omnibox keyword `nav`, calculator, command palette |
+| **10. Storage** | [10-storage-sync-and-migrations.md](docs/specs/10-storage-sync-and-migrations.md) | Three-tier storage (`sync`, `local`, `IndexedDB`) |
+| **11. Privacy & Safety** | [11-privacy-security-and-safety.md](docs/specs/11-privacy-security-and-safety.md) | Zero telemetry, protocol whitelist, permission boundaries |
+| **12. UI & Themes** | [12-configuration-and-appearance.md](docs/specs/12-configuration-and-appearance.md) | Settings dashboard (`options.html`), theme tokens |
+| **13. Scalability** | [13-performance-and-scalability.md](docs/specs/13-performance-and-scalability.md) | Concurrency control, benchmark profiles, memory limits |
+| **14. Extensibility** | [14-integrations-and-extensibility.md](docs/specs/14-integrations-and-extensibility.md) | Plugin contracts and custom provider integration |
+
+> Complete implementation plan with 11 milestones, 53 GitHub issues, and dependency ordering is available in **[PROJECT_PLAN.md](docs/PROJECT_PLAN.md)** and the **[Project Roadmap Board](https://github.com/orgs/Aethries/projects/7)**.
+
+---
 
 ## Installation & Development
 
 ### Prerequisites
 
-- Google Chrome (or any Chromium-based browser: Brave, Edge, Arc) version 108 or newer.
-- Node.js version 18 or newer and npm / pnpm.
+* Google Chrome, Brave, Arc, Edge, or any Chromium-based browser (v108+)
+* Node.js (v18+) and `npm` or `pnpm`
 
-### Setup
+### Build from Source
 
 ```bash
+# Clone the repository
 git clone https://github.com/Aethries/chrome-extension-history-search.git
 cd chrome-extension-history-search
+
+# Install dependencies and build extension bundle
 npm install
 npm run build
 ```
 
-### Load in Chrome
+### Load Unpacked Extension
 
-1. Navigate to `chrome://extensions` in your Chrome address bar.
-2. Enable "Developer mode" using the toggle in the top-right corner.
-3. Click "Load unpacked".
-4. Select the `dist/` directory generated by the build process.
-5. Open any website and press `Shift+O` to launch Chrome Navigator.
+1. Open `chrome://extensions` in your Chromium browser.
+2. Toggle **Developer mode** in the top-right corner.
+3. Click **Load unpacked**.
+4. Select the generated `dist/` directory.
+5. Open any website and press `Shift + O` to activate Navigator.
+
+---
 
 ## Privacy Contract
 
-Chrome Navigator has no tracking, no analytics, no external servers, and no user accounts. Your bookmarks, open tabs, search queries, and browsing history stay completely on your machine.
+Chrome Navigator is engineered around strict local-first principles:
+* **No Analytics or Telemetry**: Zero tracking scripts, metric trackers, or external beacon pings.
+* **No Cloud Dependency**: Bookmarks, history indexes, and search tokens remain entirely on your physical machine.
+* **No Account Required**: Ready to use immediately without signup or authentication.
+
+---
 
 ## License
 
-Dual-licensed under the Apache 2.0 and MIT licenses. See [LICENSE](LICENSE) for details.
+Dual-licensed under the **Apache 2.0** and **MIT** licenses. See [LICENSE](LICENSE) for full details.
